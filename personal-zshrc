@@ -1,0 +1,27 @@
+ZSH_THEME="avit"
+
+plugins=(
+  git
+  dnf
+  zsh-syntax-highlighting
+  zsh-autosuggestions
+)
+
+# GIT
+alias ga="git add ."
+alias gpush="git push origin"
+alias gpull="git pull origin"
+alias gs="git status"
+alias gcm="git commit -m"
+
+# HD
+alias cdpastahd="cd /media/matheus/47a7b204-df0d-451a-b3ec-be8dbda84ce7"
+alias cdpastajava="cd /media/matheus/47a7b204-df0d-451a-b3ec-be8dbda84ce7/dema/java-projects"
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+nvm use v12.16.3
+
