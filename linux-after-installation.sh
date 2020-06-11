@@ -26,7 +26,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/z
 
 clear
 
-echo 'Let`s install spotify Spotify'
+echo 'Let`s install Spotify'
 sudo snap install -y spotify
 
 clear
