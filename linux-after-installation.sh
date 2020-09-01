@@ -12,6 +12,11 @@ sudo rm -r tilix-master
 
 clear
 
+echo 'Let`s install curl'
+sudo apt-get install -y curl
+
+clear
+
 echo 'We are going to install zsh and oh-my-zsh'
 sudo apt install -y zsh
 chsh -s $(which zsh)
@@ -38,11 +43,6 @@ curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microso
 sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
 sudo apt-get update
 sudo apt-get install -y code
-
-clear
-
-echo 'Let`s install curl'
-sudo apt-get install -y curl
 
 clear
 
