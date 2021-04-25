@@ -1,5 +1,8 @@
 echo 'Here we go again!'
 
+echo 'To start, we will need git, so lets go'
+sudo apt-get install git-all
+
 echo 'First we are going do install Tilix'
 sudo apt-get install -y tilix
 
