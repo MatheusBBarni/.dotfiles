@@ -30,4 +30,5 @@
   "files.eol": "\n",
   "svg.preview.mode": "svg",
   "workbench.colorTheme": "Dracula",
+  "workbench.sideBar.location": "right",
 }
