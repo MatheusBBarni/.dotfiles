@@ -12,7 +12,6 @@ code --install-extension rocketseat.rocketseatreactjs
 code --install-extension steoates.autoimport
 code --install-extension HookyQR.beautify
 code --install-extension ecmel.vscode-html-css
-code --install-extension esbenp.prettier-vscode
 code --install-extension usernamehw.errorlens
 code --install-extension formulahendry.auto-close-tag
 code --install-extension formulahendry.auto-rename-tag
