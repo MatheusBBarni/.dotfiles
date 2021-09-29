@@ -2,6 +2,7 @@
   "window.zoomLevel": 1,
   "editor.tabSize": 2,
   "explorer.autoReveal": false,
+  "explorer.compactFolders": false,
   "emmet.includeLanguages": {
     "javascript": "javascriptreact"
   },
@@ -14,6 +15,7 @@
     "badge.background": "#ff79c6",
     "badge.foreground": "#f8f8f2",
   },
+  "editor.bracketPairColorization.enabled": true,
   "editor.minimap.enabled": false,
   "editor.highlightActiveIndentGuide": false,
   "editor.maxTokenizationLineLength": 999999,
