@@ -63,6 +63,11 @@ source ~/.profile
 
 clear
 
+echo 'Intalling go'
+wget https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz
+sudo tar -xvf go1.14.2.linux-amd64.tar.gz
+sudo mv go /usr/local
+
 echo 'Remember to put the content of yours personal-zshrc on the .zshrc'
 
 
