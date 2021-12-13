@@ -64,9 +64,9 @@ source ~/.profile
 clear
 
 echo 'Intalling go'
-GO_URL=https://go.dev/dl/go1.17.5.linux-amd64.tar.gz
-wget $GO_URL
-sudo tar -xvf $GO_URL
+GO_FILE=go1.17.5.linux-amd64.tar.gz
+wget https://go.dev/dl/$GO_FILE
+sudo tar -xvf $GO_FILE
 sudo mv go /usr/local
 
 echo 'Remember to put the content of yours personal-zshrc on the .zshrc'
