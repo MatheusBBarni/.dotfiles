@@ -3,7 +3,6 @@ code --install-extension dbaeumer.vscode-eslint
 code --install-extension dracula-theme.theme-dracula
 code --install-extension eamodio.gitlens
 code --install-extension jpoissonnier.vscode-styled-components
-code --install-extension ms-vscode.vscode-typescript-next
 code --install-extension naumovs.color-highlight
 code --install-extension oderwat.indent-rainbow
 code --install-extension PKief.material-icon-theme
@@ -16,3 +15,5 @@ code --install-extension usernamehw.errorlens
 code --install-extension formulahendry.auto-close-tag
 code --install-extension formulahendry.auto-rename-tag
 code --install-extension editorconfig.editorconfig
+code --install-extension esbenp.prettier-vscode
+code --install-extension chenglou92.rescript-vscode
