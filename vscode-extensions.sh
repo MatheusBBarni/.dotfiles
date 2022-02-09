@@ -17,3 +17,4 @@ code --install-extension formulahendry.auto-rename-tag
 code --install-extension editorconfig.editorconfig
 code --install-extension esbenp.prettier-vscode
 code --install-extension chenglou92.rescript-vscode
+code --install-extension arcticicestudio.nord-visual-studio-code
