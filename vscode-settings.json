@@ -7,12 +7,12 @@
     "javascript": "javascriptreact"
   },
   "workbench.colorCustomizations": {
-    "statusBar.debuggingBackground": "#39f843",
-    "statusBar.foreground": "#282a36",
-    "statusBar.background": "#ff79c6",
+    "statusBar.debuggingBackground": "#D08770",
+    "statusBar.foreground": "#ECEFF4",
+    "statusBar.background": "#4C566A",
     "statusBarItem.hoverBackground": "#f8f8f2",
-    "activityBarBadge.background": "#ff79c6",
-    "badge.background": "#ff79c6",
+    "activityBarBadge.background": "#E5E9F0",
+    "badge.background": "#D8DEE9",
     "badge.foreground": "#f8f8f2",
   },
   "editor.bracketPairColorization.enabled": true,
@@ -30,7 +30,23 @@
     "javascript"
   ],
   "files.eol": "\n",
-  "svg.preview.mode": "svg",
   "workbench.colorTheme": "Dracula",
   "workbench.sideBar.location": "right",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/*.bs.js": true
+    // "node_modules/": true
+  },
+  "workbench.colorTheme": "Nord",
+  "newFile.defaultBaseFileName": "newFile",
+  "newFile.relativeTo": "project", // "root" or "project"
+  "newFile.defaultFileExtension": ".ts",
+  "newFile.rootDirectory": "~",
+  "newFile.showPathRelativeTo": "project", // "project" or "none"
+  "newFile.expandBraces": true
 }
