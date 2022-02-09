@@ -40,13 +40,32 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "**/*.bs.js": true
-    // "node_modules/": true
   },
   "workbench.colorTheme": "Nord",
   "newFile.defaultBaseFileName": "newFile",
-  "newFile.relativeTo": "project", // "root" or "project"
+  "newFile.relativeTo": "project",
   "newFile.defaultFileExtension": ".ts",
   "newFile.rootDirectory": "~",
-  "newFile.showPathRelativeTo": "project", // "project" or "none"
-  "newFile.expandBraces": true
+  "newFile.showPathRelativeTo": "project",
+  "newFile.expandBraces": true,
+  "auto-close-tag.activationOnLanguage": [
+    "xml",
+    "php",
+    "blade",
+    "ejs",
+    "jinja",
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "plaintext",
+    "markdown",
+    "vue",
+    "liquid",
+    "erb",
+    "lang-cfml",
+    "cfml",
+    "HTML (Eex)",
+    "rescript"
+  ]
 }
