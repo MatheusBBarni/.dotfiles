@@ -22,3 +22,4 @@ code --install-extension dkundel.vscode-new-file
 code --install-extension aliariff.auto-add-brackets
 code --install-extension andys8.jest-snippets
 code --install-extension christian-kohler.npm-intellisense
+code --install-extension orta.vscode-jest
