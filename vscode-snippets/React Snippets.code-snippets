@@ -1,0 +1,17 @@
+{
+	"Simple React Component": {
+		"prefix": "simple-rc",
+		"body": [
+			"import React from 'react'",
+			"",
+			"export function ${1:${TM_DIRECTORY/^.*(\\/|\\\\)([^(\\/|\\\\)]+)$/$2/}}() {",
+			"  return (",
+			"    <div>",
+			"        $1",
+			"    </div>",
+			"  )",
+			"}"
+		],
+		"description": "Simple React Component"
+	}
+}
