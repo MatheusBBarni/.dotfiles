@@ -18,6 +18,7 @@
   "editor.bracketPairColorization.enabled": true,
   "editor.minimap.enabled": false,
   "editor.highlightActiveIndentGuide": false,
+  "editor.parameterHints.enabled": false,
   "editor.maxTokenizationLineLength": 999999,
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
