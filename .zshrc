@@ -108,8 +108,8 @@ source $ZSH/oh-my-zsh.sh
 
 # GIT
 alias ga="git add ."
-alias gpush="git push origin"
-alias gpull="git pull origin"
+alias gpush="git push"
+alias gpull="git pull"
 alias gs="git status"
 alias gcm="git commit -m"
 alias gf="git fetch origin"
