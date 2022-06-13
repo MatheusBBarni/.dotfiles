@@ -32,7 +32,6 @@
     "javascript"
   ],
   "files.eol": "\n",
-  "workbench.colorTheme": "Dracula",
   "workbench.sideBar.location": "right",
   "files.exclude": {
     "**/.git": true,
