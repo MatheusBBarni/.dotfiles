@@ -1,4 +1,3 @@
-code --install-extension 2gua.rainbow-brackets
 code --install-extension dbaeumer.vscode-eslint
 code --install-extension dracula-theme.theme-dracula
 code --install-extension eamodio.gitlens
@@ -22,5 +21,10 @@ code --install-extension dkundel.vscode-new-file
 code --install-extension aliariff.auto-add-brackets
 code --install-extension andys8.jest-snippets
 code --install-extension christian-kohler.npm-intellisense
-code --install-extension orta.vscode-jest
 code --install-extension guilhermerodz.omni-owl
+code --install-extension ms-azuretools.vscode-docker
+code --install-extension mhutchie.git-graph
+code --install-extension ms-vscode-remote.remote-containers
+code --install-extension rangav.vscode-thunder-client
+code --install-extension emmanuelbeziat.vscode-great-icons
+
