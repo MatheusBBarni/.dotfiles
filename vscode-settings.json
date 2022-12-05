@@ -1,10 +1,11 @@
 {
-  "window.zoomLevel": 1,
   "editor.tabSize": 2,
   "explorer.autoReveal": false,
   "explorer.compactFolders": false,
   "emmet.includeLanguages": {
-    "javascript": "javascriptreact"
+    "javascript": "javascriptreact",
+    "rescript": "javascriptreact",
+    "gohtml": "javascriptreact"
   },
   "workbench.colorCustomizations": {
     "statusBar.debuggingBackground": "#D08770",
@@ -13,21 +14,23 @@
     "statusBarItem.hoverBackground": "#f8f8f2",
     "activityBarBadge.background": "#E5E9F0",
     "badge.background": "#D8DEE9",
-    "badge.foreground": "#f8f8f2",
+    "badge.foreground": "#f8f8f2"
+    // "editor.background": "#000000",
+    // "editorGutter.background": "#000000"
   },
   "editor.bracketPairColorization.enabled": true,
   "editor.minimap.enabled": false,
-  "editor.highlightActiveIndentGuide": false,
   "editor.parameterHints.enabled": false,
   "editor.maxTokenizationLineLength": 999999,
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
-  "workbench.iconTheme": "material-icon-theme",
+  "workbench.iconTheme": "vscode-great-icons",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.validate": [
     "javascript"
   ],
@@ -42,7 +45,6 @@
     "**/Thumbs.db": true,
     "**/*.bs.js": true
   },
-  "workbench.colorTheme": "Nord",
   "newFile.defaultBaseFileName": "newFile",
   "newFile.relativeTo": "project",
   "newFile.defaultFileExtension": ".ts",
@@ -68,5 +70,34 @@
     "cfml",
     "HTML (Eex)",
     "rescript"
-  ]
+  ],
+  "editor.guides.highlightActiveIndentation": false,
+  "[rust]": {
+    "editor.semanticHighlighting.enabled": false,
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  "window.zoomLevel": 2,
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "workbench.colorTheme": "Omni Dracula Theme Traditional",
+  "[rescript]": {
+    "editor.defaultFormatter": "chenglou92.rescript-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "go.toolsManagement.autoUpdate": true,
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[proto3]": {
+    "editor.defaultFormatter": "zxh404.vscode-proto3"
+  }
 }
