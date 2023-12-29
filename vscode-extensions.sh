@@ -6,7 +6,6 @@ code --install-extension naumovs.color-highlight
 code --install-extension oderwat.indent-rainbow
 code --install-extension PKief.material-icon-theme
 code --install-extension ritwickdey.LiveServer
-code --install-extension rocketseat.rocketseatreactjs
 code --install-extension steoates.autoimport
 code --install-extension HookyQR.beautify
 code --install-extension ecmel.vscode-html-css
@@ -17,14 +16,10 @@ code --install-extension editorconfig.editorconfig
 code --install-extension esbenp.prettier-vscode
 code --install-extension chenglou92.rescript-vscode
 code --install-extension arcticicestudio.nord-visual-studio-code
-code --install-extension dkundel.vscode-new-file
 code --install-extension aliariff.auto-add-brackets
-code --install-extension andys8.jest-snippets
 code --install-extension christian-kohler.npm-intellisense
-code --install-extension guilhermerodz.omni-owl
 code --install-extension ms-azuretools.vscode-docker
 code --install-extension mhutchie.git-graph
 code --install-extension ms-vscode-remote.remote-containers
-code --install-extension rangav.vscode-thunder-client
 code --install-extension emmanuelbeziat.vscode-great-icons
 
