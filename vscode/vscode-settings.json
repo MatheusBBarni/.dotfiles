@@ -15,24 +15,19 @@
     "activityBarBadge.background": "#E5E9F0",
     "badge.background": "#D8DEE9",
     "badge.foreground": "#f8f8f2"
-    // "editor.background": "#000000",
-    // "editorGutter.background": "#000000"
   },
   "editor.bracketPairColorization.enabled": true,
   "editor.minimap.enabled": false,
   "editor.parameterHints.enabled": false,
   "editor.maxTokenizationLineLength": 999999,
-  "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
-  "workbench.iconTheme": "vscode-great-icons",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.organizeImports": true
+    "source.fixAll.eslint": "explicit"
   },
-  // "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.validate": [
-    "javascript"
+    "javascript",
   ],
   "files.eol": "\n",
   "workbench.sideBar.location": "right",
@@ -45,12 +40,6 @@
     "**/Thumbs.db": true,
     "**/*.bs.js": true
   },
-  "newFile.defaultBaseFileName": "newFile",
-  "newFile.relativeTo": "project",
-  "newFile.defaultFileExtension": ".ts",
-  "newFile.rootDirectory": "~",
-  "newFile.showPathRelativeTo": "project",
-  "newFile.expandBraces": true,
   "auto-close-tag.activationOnLanguage": [
     "xml",
     "php",
@@ -80,10 +69,6 @@
   "[javascript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
-  "workbench.colorTheme": "Omni Dracula Theme Traditional",
-  "[rescript]": {
-    "editor.defaultFormatter": "chenglou92.rescript-vscode"
-  },
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
@@ -93,11 +78,12 @@
   "[typescript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
-  "go.toolsManagement.autoUpdate": true,
-  "[go]": {
-    "editor.defaultFormatter": "golang.go"
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
-  "[proto3]": {
-    "editor.defaultFormatter": "zxh404.vscode-proto3"
-  }
+  "workbench.colorTheme": "Tokyo Night",
+  "editor.fontFamily": "FiraCode Nerd Font Mono",
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "workbench.iconTheme": "vscode-great-icons",
+  "workbench.productIconTheme": "fluent-icons"
 }
