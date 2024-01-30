@@ -1,11 +1,9 @@
 code --install-extension dbaeumer.vscode-eslint
-code --install-extension dracula-theme.theme-dracula
+code --install-extension enkia.tokyo-night
 code --install-extension eamodio.gitlens
-code --install-extension jpoissonnier.vscode-styled-components
 code --install-extension naumovs.color-highlight
 code --install-extension oderwat.indent-rainbow
 code --install-extension PKief.material-icon-theme
-code --install-extension ritwickdey.LiveServer
 code --install-extension steoates.autoimport
 code --install-extension HookyQR.beautify
 code --install-extension ecmel.vscode-html-css
@@ -14,12 +12,9 @@ code --install-extension formulahendry.auto-close-tag
 code --install-extension formulahendry.auto-rename-tag
 code --install-extension editorconfig.editorconfig
 code --install-extension esbenp.prettier-vscode
-code --install-extension chenglou92.rescript-vscode
 code --install-extension arcticicestudio.nord-visual-studio-code
 code --install-extension aliariff.auto-add-brackets
-code --install-extension christian-kohler.npm-intellisense
 code --install-extension ms-azuretools.vscode-docker
-code --install-extension mhutchie.git-graph
 code --install-extension ms-vscode-remote.remote-containers
 code --install-extension emmanuelbeziat.vscode-great-icons
-
+code --install-extension miguelsolorio.fluent-icons
