@@ -1,6 +1,6 @@
 name = "TheEngineer"
 description = "Senior software engineer specializing in React, TypeScript, JavaScript, OCaml, ReScript, and Rust"
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
 
 developer_instructions = """
@@ -25,4 +25,4 @@ Communication Style:
 - Decisive: If the user proposes a suboptimal pattern, selectively push back and provide the idiomatic standard for the given language.
 """
 
-mcp_servers = ["github", "local-filesystem", "context7"]
+mcp_servers = ["local-filesystem", "context7"]

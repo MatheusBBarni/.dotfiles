@@ -195,6 +195,29 @@ configure_cmux() {
   fi
 }
 
+configure_codex() {
+  echo "Configuring Codex"
+
+  if command -v codex >/dev/null 2>&1; then
+    if ! codex mcp list 2>/dev/null | awk '{print $1}' | grep -qx "context7"; then
+      codex mcp add context7 -- npx -y @upstash/context7-mcp
+    fi
+  else
+    echo "Codex CLI not found; skipping Context7 MCP setup"
+  fi
+
+  mkdir -p "$HOME/.codex/agents"
+  for agent in "$DOTFILES_DIR"/ai/agents/codex/*.toml; do
+    link_file "$agent" "$HOME/.codex/agents/$(basename "$agent")"
+  done
+
+  mkdir -p "$HOME/.codex/skills"
+  for skill in "$DOTFILES_DIR"/ai/skills/*; do
+    [[ -d "$skill" ]] || continue
+    link_file "$skill" "$HOME/.codex/skills/$(basename "$skill")"
+  done
+}
+
 install_brew
 install_base_packages
 install_oh_my_zsh
@@ -203,6 +226,7 @@ install_nvm
 echo "Installing CLIs"
 brew install bun node pnpm gemini-cli neovim
 brew install --cask codex
+configure_codex
 
 echo "Installing apps"
 brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity tailscale
