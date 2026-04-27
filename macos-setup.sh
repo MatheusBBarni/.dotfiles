@@ -44,7 +44,7 @@ install_brew() {
 
 install_base_packages() {
   echo "Installing base packages"
-  brew install git
+  brew install git mas
 }
 
 install_oh_my_zsh() {
@@ -168,6 +168,28 @@ install_handy() {
   rm -rf "$mount_point" "$tmp_dmg"
 }
 
+install_xcode() {
+  echo "Installing Xcode"
+
+  if [[ ! -d "/Applications/Xcode.app" ]]; then
+    if mas account >/dev/null 2>&1; then
+      mas install 497799835 || {
+        echo "Xcode install failed. Open the App Store, sign in, and install Xcode manually."
+        return 0
+      }
+    else
+      echo "Mac App Store is not signed in. Install Xcode manually from the App Store."
+      return 0
+    fi
+  fi
+
+  if [[ -d "/Applications/Xcode.app" ]]; then
+    sudo xcode-select -s "/Applications/Xcode.app/Contents/Developer"
+    sudo xcodebuild -license accept
+    sudo xcodebuild -runFirstLaunch
+  fi
+}
+
 configure_antigravity() {
   echo "Configuring Antigravity"
   link_file \
@@ -224,14 +246,15 @@ install_oh_my_zsh
 install_nvm
 
 echo "Installing CLIs"
-brew install bun node pnpm gemini-cli neovim
+brew install bun node pnpm gemini-cli neovim watchman
 brew install --cask codex
 configure_codex
 
 echo "Installing apps"
-brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity tailscale
+brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity tailscale android-studio android-platform-tools discord
 install_gemini_desktop
 install_handy
+install_xcode
 
 configure_cmux
 configure_antigravity

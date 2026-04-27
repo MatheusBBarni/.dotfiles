@@ -67,6 +67,10 @@ alias dsal='docker kill $(docker ps -q)'
 
 command -v nvm >/dev/null 2>&1 && nvm use default >/dev/null 2>&1
 
+# Android
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
+
 # GO
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
