@@ -1,22 +1,215 @@
-echo 'Here we go again!'
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo 'Installing brew'
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+echo "Here we go again!"
 
-brew update
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NODE_VERSION="24"
 
-echo 'Installing productivity apps'
-brew install nvm
-brew install pnpm
-brew install starship
-brew install rectangle
-brew install --cask raycast
-brew install alt-tab
-brew install stats
-brew install itsycal
-brew install neovim
+backup_path() {
+  local path="$1"
+  if [[ -e "$path" || -L "$path" ]]; then
+    mv "$path" "${path}.backup.$(date +%Y%m%d%H%M%S)"
+  fi
+}
 
-nvm install v16.16.0
-nvm alias default v16.16.0
+link_file() {
+  local source="$1"
+  local target="$2"
 
-npm i -g yarn@1.22.19
+  mkdir -p "$(dirname "$target")"
+
+  if [[ -L "$target" && "$(readlink "$target")" == "$source" ]]; then
+    return
+  fi
+
+  backup_path "$target"
+  ln -s "$source" "$target"
+}
+
+install_brew() {
+  if ! command -v brew >/dev/null 2>&1; then
+    echo "Installing Homebrew"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -x /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+
+  brew update
+}
+
+install_base_packages() {
+  echo "Installing base packages"
+  brew install git
+}
+
+install_oh_my_zsh() {
+  echo "Installing zsh and Oh My Zsh"
+  brew install zsh zsh-autosuggestions zsh-syntax-highlighting
+
+  local brew_zsh
+  brew_zsh="$(brew --prefix)/bin/zsh"
+
+  if ! grep -qxF "$brew_zsh" /etc/shells; then
+    echo "Adding Homebrew zsh to /etc/shells"
+    echo "$brew_zsh" | sudo tee -a /etc/shells >/dev/null
+  fi
+
+  if [[ "$SHELL" != "$brew_zsh" ]]; then
+    echo "Setting Homebrew zsh as the default shell"
+    chsh -s "$brew_zsh"
+  fi
+
+  if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+    RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
+      "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  fi
+
+  local custom_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+  mkdir -p "$custom_dir/plugins"
+
+  if [[ ! -d "$custom_dir/plugins/zsh-autosuggestions" ]]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions \
+      "$custom_dir/plugins/zsh-autosuggestions"
+  fi
+
+  if [[ ! -d "$custom_dir/plugins/zsh-syntax-highlighting" ]]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+      "$custom_dir/plugins/zsh-syntax-highlighting"
+  fi
+
+  link_file "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
+}
+
+install_nvm() {
+  echo "Installing nvm"
+
+  if [[ ! -s "$HOME/.nvm/nvm.sh" ]]; then
+    PROFILE=/dev/null bash -c \
+      "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh)"
+  fi
+
+  export NVM_DIR="$HOME/.nvm"
+  # shellcheck disable=SC1091
+  . "$NVM_DIR/nvm.sh"
+
+  nvm install "$NODE_VERSION"
+  nvm alias default "$NODE_VERSION"
+  nvm use default
+}
+
+install_gemini_desktop() {
+  echo "Installing Gemini desktop app"
+
+  local gemini_url
+  gemini_url="$(
+    curl -fsSL "https://gemini.google/mac/" |
+      perl -ne 'if (/href="(https:\/\/dl\.google\.com\/[^"]+)"/) { print "$1\n"; exit }'
+  )"
+  gemini_url="${gemini_url:-https://dl.google.com/release2/j33ro/release/Gemini.dmg}"
+
+  local tmp_dmg="/tmp/Gemini.dmg"
+  curl -fL "$gemini_url" -o "$tmp_dmg"
+
+  local mount_point
+  mount_point="$(mktemp -d)"
+
+  hdiutil attach "$tmp_dmg" -mountpoint "$mount_point" -nobrowse -quiet
+  sudo rm -rf "/Applications/Gemini.app"
+  sudo ditto "$mount_point/Gemini.app" "/Applications/Gemini.app"
+  hdiutil detach "$mount_point" -quiet
+  rm -rf "$mount_point" "$tmp_dmg"
+}
+
+install_handy() {
+  echo "Installing Handy"
+
+  local handy_arch
+  if [[ "$(uname -m)" == "arm64" ]]; then
+    handy_arch="aarch64"
+  else
+    handy_arch="x64"
+  fi
+
+  local handy_url
+  handy_url="$(
+    curl -fsSL "https://handy.computer/download" |
+      perl -ne 'if (/href="([^"]*Handy_[^"]*_'${handy_arch}'\.dmg)"/) { print "$1\n"; exit }'
+  )"
+
+  if [[ -z "$handy_url" ]]; then
+    handy_url="https://github.com/cjpais/Handy/releases/download/v0.8.1/Handy_0.8.1_${handy_arch}.dmg"
+  fi
+
+  local tmp_dmg="/tmp/Handy.dmg"
+  curl -fL "$handy_url" -o "$tmp_dmg"
+
+  local mount_point
+  mount_point="$(mktemp -d)"
+
+  hdiutil attach "$tmp_dmg" -mountpoint "$mount_point" -nobrowse -quiet
+
+  local app_path
+  app_path="$(find "$mount_point" -maxdepth 2 -name "Handy.app" -print -quit)"
+  if [[ -z "$app_path" ]]; then
+    hdiutil detach "$mount_point" -quiet
+    rm -rf "$mount_point" "$tmp_dmg"
+    echo "Handy.app was not found in the mounted DMG"
+    return 1
+  fi
+
+  sudo rm -rf "/Applications/Handy.app"
+  sudo ditto "$app_path" "/Applications/Handy.app"
+  hdiutil detach "$mount_point" -quiet
+  rm -rf "$mount_point" "$tmp_dmg"
+}
+
+configure_antigravity() {
+  echo "Configuring Antigravity"
+  link_file \
+    "$DOTFILES_DIR/vscode/vscode-settings.json" \
+    "$HOME/Library/Application Support/Antigravity/User/settings.json"
+
+  local antigravity_cli="/Applications/Antigravity.app/Contents/Resources/app/bin/antigravity"
+  if [[ ! -x "$antigravity_cli" ]]; then
+    antigravity_cli="$(command -v antigravity || true)"
+  fi
+
+  if [[ -n "$antigravity_cli" && -x "$antigravity_cli" ]]; then
+    EDITOR_CLI="$antigravity_cli" "$DOTFILES_DIR/vscode/vscode-extensions.sh"
+  else
+    echo "Antigravity CLI not found; skipping extension install"
+  fi
+}
+
+configure_cmux() {
+  echo "Configuring cmux CLI"
+
+  local cmux_bin="/Applications/cmux.app/Contents/Resources/bin/cmux"
+  if [[ -x "$cmux_bin" ]]; then
+    sudo ln -sf "$cmux_bin" "$(brew --prefix)/bin/cmux"
+  fi
+}
+
+install_brew
+install_base_packages
+install_oh_my_zsh
+install_nvm
+
+echo "Installing CLIs"
+brew install bun node pnpm gemini-cli neovim
+brew install --cask codex
+
+echo "Installing apps"
+brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity tailscale
+install_gemini_desktop
+install_handy
+
+configure_cmux
+configure_antigravity
+
+echo "Done"

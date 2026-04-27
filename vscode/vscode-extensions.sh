@@ -1,20 +1,35 @@
-code --install-extension dbaeumer.vscode-eslint
-code --install-extension enkia.tokyo-night
-code --install-extension eamodio.gitlens
-code --install-extension naumovs.color-highlight
-code --install-extension oderwat.indent-rainbow
-code --install-extension PKief.material-icon-theme
-code --install-extension steoates.autoimport
-code --install-extension HookyQR.beautify
-code --install-extension ecmel.vscode-html-css
-code --install-extension usernamehw.errorlens
-code --install-extension formulahendry.auto-close-tag
-code --install-extension formulahendry.auto-rename-tag
-code --install-extension editorconfig.editorconfig
-code --install-extension esbenp.prettier-vscode
-code --install-extension arcticicestudio.nord-visual-studio-code
-code --install-extension aliariff.auto-add-brackets
-code --install-extension ms-azuretools.vscode-docker
-code --install-extension ms-vscode-remote.remote-containers
-code --install-extension emmanuelbeziat.vscode-great-icons
-code --install-extension miguelsolorio.fluent-icons
+#!/usr/bin/env bash
+set -euo pipefail
+
+EDITOR_CLI="${EDITOR_CLI:-code}"
+
+extensions=(
+  dbaeumer.vscode-eslint
+  enkia.tokyo-night
+  eamodio.gitlens
+  naumovs.color-highlight
+  oderwat.indent-rainbow
+  PKief.material-icon-theme
+  steoates.autoimport
+  HookyQR.beautify
+  ecmel.vscode-html-css
+  usernamehw.errorlens
+  formulahendry.auto-close-tag
+  formulahendry.auto-rename-tag
+  editorconfig.editorconfig
+  esbenp.prettier-vscode
+  arcticicestudio.nord-visual-studio-code
+  aliariff.auto-add-brackets
+  ms-azuretools.vscode-docker
+  ms-vscode-remote.remote-containers
+  emmanuelbeziat.vscode-great-icons
+  miguelsolorio.fluent-icons
+  expo.vscode-expo-tools
+  davidanson.vscode-markdownlint
+  ocamllabs.ocaml-platform
+  redhat.vscode-yaml
+)
+
+for extension in "${extensions[@]}"; do
+  "$EDITOR_CLI" --install-extension "$extension"
+done

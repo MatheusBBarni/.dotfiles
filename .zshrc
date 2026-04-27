@@ -1,4 +1,4 @@
-export ZSH="/home/matheus/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="candy"
@@ -56,16 +56,16 @@ alias dcu="docker compose up"
 # Docker Compose Down
 alias dcd="docker compose down"
 # Docker Remove Images
-alias drmi="docker rmi $(docker images -q)"
+alias drmi='docker rmi $(docker images -q)'
 # Docker Delete All Containers
-alias ddac="docker rm -f $(docker ps -a -q)"
+alias ddac='docker rm -f $(docker ps -a -q)'
 # Docker Stop All Containers
-alias dsal="docker kill $(docker ps -q)"
+alias dsal='docker kill $(docker ps -q)'
 
 # NVM
 [[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh
 
-nvm use v14.17.5 
+command -v nvm >/dev/null 2>&1 && nvm use default >/dev/null 2>&1
 
 # GO
 export GOROOT=/usr/local/go
@@ -76,5 +76,3 @@ export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-
-eval "$(starship init zsh)"
