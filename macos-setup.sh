@@ -190,6 +190,27 @@ install_xcode() {
   fi
 }
 
+configure_atlas_extensions() {
+  echo "Opening Atlas extension install pages"
+
+  local atlas_app="/Applications/ChatGPT Atlas.app"
+  if [[ ! -d "$atlas_app" ]]; then
+    echo "ChatGPT Atlas is not installed; skipping extension pages"
+    return
+  fi
+
+  local extension_urls=(
+    "https://chromewebstore.google.com/detail/bitwarden-password-manager/nngceckbapebfimnlniiiahkandclblb"
+    "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi"
+    "https://chromewebstore.google.com/detail/volume-master/jghecgabfgfdldnmbfkhmffcabddioke"
+    "https://chromewebstore.google.com/detail/cuponomia-cupom-e-cashbac/gidejehfgombmkfflghejpncblgfkagj"
+  )
+
+  for extension_url in "${extension_urls[@]}"; do
+    open -a "ChatGPT Atlas" "$extension_url"
+  done
+}
+
 configure_antigravity() {
   echo "Configuring Antigravity"
   link_file \
@@ -255,6 +276,7 @@ brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity t
 install_gemini_desktop
 install_handy
 install_xcode
+configure_atlas_extensions
 
 configure_cmux
 configure_antigravity
