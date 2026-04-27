@@ -1,10 +1,43 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "Here we go again!"
-
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NODE_VERSION="24"
+ATLAS_BOOKMARKS_HTML=""
+
+usage() {
+  cat <<EOF
+Usage: $0 [options]
+
+Options:
+  --atlas-bookmarks-html PATH  Local Brave/Chrome bookmarks HTML export to import into Atlas
+  -h, --help                   Show this help
+EOF
+}
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --atlas-bookmarks-html)
+        if [[ $# -lt 2 ]]; then
+          echo "--atlas-bookmarks-html requires a file path"
+          exit 1
+        fi
+        ATLAS_BOOKMARKS_HTML="$2"
+        shift 2
+        ;;
+      -h | --help)
+        usage
+        exit 0
+        ;;
+      *)
+        echo "Unknown option: $1"
+        usage
+        exit 1
+        ;;
+    esac
+  done
+}
 
 backup_path() {
   local path="$1"
@@ -211,6 +244,45 @@ configure_atlas_extensions() {
   done
 }
 
+configure_atlas_bookmarks() {
+  if [[ -z "$ATLAS_BOOKMARKS_HTML" ]]; then
+    return
+  fi
+
+  echo "Preparing Atlas bookmarks import"
+
+  local bookmarks_file
+  bookmarks_file="$(cd "$(dirname "$ATLAS_BOOKMARKS_HTML")" && pwd)/$(basename "$ATLAS_BOOKMARKS_HTML")"
+
+  if [[ ! -f "$bookmarks_file" ]]; then
+    echo "Bookmarks file not found: $bookmarks_file"
+    exit 1
+  fi
+
+  case "$bookmarks_file" in
+    "$DOTFILES_DIR"/*)
+      echo "Warning: bookmarks file is inside this repo. Keep it untracked."
+      ;;
+  esac
+
+  local atlas_app="/Applications/ChatGPT Atlas.app"
+  if [[ ! -d "$atlas_app" ]]; then
+    echo "ChatGPT Atlas is not installed; skipping bookmarks import"
+    return
+  fi
+
+  if command -v pbcopy >/dev/null 2>&1; then
+    printf "%s" "$bookmarks_file" | pbcopy
+  fi
+
+  open -a "ChatGPT Atlas" "chrome://bookmarks/"
+  open -R "$bookmarks_file"
+
+  echo "Atlas does not expose a reliable bookmarks import CLI."
+  echo "In Atlas, open Bookmarks Manager > menu > Import bookmarks, then select:"
+  echo "$bookmarks_file"
+}
+
 configure_antigravity() {
   echo "Configuring Antigravity"
   link_file \
@@ -261,6 +333,10 @@ configure_codex() {
   done
 }
 
+parse_args "$@"
+
+echo "Here we go again!"
+
 install_brew
 install_base_packages
 install_oh_my_zsh
@@ -277,6 +353,7 @@ install_gemini_desktop
 install_handy
 install_xcode
 configure_atlas_extensions
+configure_atlas_bookmarks
 
 configure_cmux
 configure_antigravity
