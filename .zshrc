@@ -41,6 +41,8 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # GIT
+[ -f "$HOME/start-ssh.sh" ] && . "$HOME/start-ssh.sh"
+
 alias ga="git add ."
 alias gpush="git push"
 alias gpull="git pull"
@@ -76,7 +78,8 @@ export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
-# GO
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+# Turso
+export PATH="$PATH:/home/adminai/.turso"
+
+# Codex
+alias coo="codex --yolo"
