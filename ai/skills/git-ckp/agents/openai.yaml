@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git CKP"
+  short_description: "Fetch, checkout, and update Git branches"
+  default_prompt: "Use $git-ckp with a branch name argument to fetch, checkout, and pull the latest changes safely."

@@ -348,7 +348,7 @@ brew install --cask codex
 configure_codex
 
 echo "Installing apps"
-brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity tailscale android-studio android-platform-tools discord
+brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity zed tailscale android-studio android-platform-tools discord
 install_gemini_desktop
 install_handy
 install_xcode

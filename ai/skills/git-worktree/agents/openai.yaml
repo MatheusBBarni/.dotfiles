@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Worktree"
+  short_description: "Create isolated Git worktrees"
+  default_prompt: "Use $git-worktree to create a new worktree for the current repository."

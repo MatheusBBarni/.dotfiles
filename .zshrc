@@ -81,3 +81,10 @@ export PATH="$PATH:/home/adminai/.turso"
 
 # Codex
 alias coo="codex --yolo"
+
+# bun completions
+[ -s "/home/adminai/.bun/_bun" ] && source "/home/adminai/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
