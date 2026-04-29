@@ -343,7 +343,7 @@ install_oh_my_zsh
 install_nvm
 
 echo "Installing CLIs"
-brew install bun node pnpm gemini-cli neovim watchman compozy/tap/compozy
+brew install bun node pnpm gemini-cli neovim watchman compozy/tap/compozy tursodatabase/tap/turso
 brew install --cask codex
 configure_codex
 
