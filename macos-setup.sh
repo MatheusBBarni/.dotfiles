@@ -80,6 +80,34 @@ install_base_packages() {
   brew install git mas
 }
 
+configure_zed() {
+  echo "Configuring Zed"
+
+  local zed_config_dir="$HOME/.config/zed"
+  local config_files=(settings.json keymap.json tasks.json debug.json)
+  local config_dirs=(snippets themes)
+  local item
+
+  mkdir -p "$zed_config_dir"
+
+  for item in "${config_files[@]}"; do
+    if [[ -f "$DOTFILES_DIR/zed/$item" ]]; then
+      link_file "$DOTFILES_DIR/zed/$item" "$zed_config_dir/$item"
+    fi
+  done
+
+  for item in "${config_dirs[@]}"; do
+    if [[ -d "$DOTFILES_DIR/zed/$item" ]]; then
+      link_file "$DOTFILES_DIR/zed/$item" "$zed_config_dir/$item"
+    fi
+  done
+
+  if [[ -f "$DOTFILES_DIR/zed/auto-install-extensions.json" ]]; then
+    echo "Zed extensions are exported in zed/auto-install-extensions.json"
+    echo "Merge them into zed/settings.json under auto_install_extensions."
+  fi
+}
+
 install_oh_my_zsh() {
   echo "Installing zsh and Oh My Zsh"
   brew install zsh zsh-autosuggestions zsh-syntax-highlighting
@@ -349,6 +377,7 @@ configure_codex
 
 echo "Installing apps"
 brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity zed tailscale android-studio android-platform-tools discord
+configure_zed
 install_gemini_desktop
 install_handy
 install_xcode
