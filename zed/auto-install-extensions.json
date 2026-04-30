@@ -1,0 +1,17 @@
+﻿{
+    "auto_install_extensions":  {
+                                    "basher":  true,
+                                    "biome":  true,
+                                    "catppuccin":  true,
+                                    "catppuccin-icons":  true,
+                                    "git-firefly":  true,
+                                    "html":  true,
+                                    "make":  true,
+                                    "mcp-server-context7":  true,
+                                    "mcp-server-github":  true,
+                                    "nord":  true,
+                                    "ocaml":  true,
+                                    "prisma":  true,
+                                    "toml":  true
+                                }
+}
