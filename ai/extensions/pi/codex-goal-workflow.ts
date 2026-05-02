@@ -2,13 +2,18 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { Text } from "@mariozechner/pi-tui";
 import { Type } from "@sinclair/typebox";
 import { spawn } from "node:child_process";
-import { chmodSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, openSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const SubmitCodexGoalParams = Type.Object({
 	title: Type.String({ description: "Short title for the goal." }),
 	kind: Type.Optional(Type.String({ description: "Document type, usually PRD or SPEC." })),
-	document: Type.String({ description: "The complete PRD/SPEC to approve and send to Codex /goal." }),
+	document: Type.String({ description: "The complete PRD/SPEC to approve and run through Codex Loop." }),
+	loopGoal: Type.Optional(Type.String({ description: "Completion goal for codex-loop. Defaults to verified implementation." })),
+	confirmModel: Type.Optional(Type.String({ description: "codex-loop confirmation model. Defaults to gpt-5.5." })),
+	confirmReasoningEffort: Type.Optional(
+		Type.String({ description: "codex-loop confirmation reasoning effort. Defaults to high." }),
+	),
 });
 
 function slugify(value: string): string {
@@ -20,51 +25,53 @@ function slugify(value: string): string {
 	return slug || "codex-goal";
 }
 
-function shellQuote(value: string): string {
-	return `'${value.replace(/'/g, "'\\''")}'`;
+function headerValue(value: string): string {
+	return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
 
-function buildCodexPrompt(kind: string, title: string, document: string): string {
+function buildCodexLoopPrompt(
+	kind: string,
+	title: string,
+	document: string,
+	loopGoal: string,
+	confirmModel: string,
+	confirmReasoningEffort: string,
+): string {
+	const name = slugify(title);
+	const header = [
+		`[[CODEX_LOOP name="${headerValue(name)}"`,
+		`goal="${headerValue(loopGoal)}"`,
+		`confirm_model="${headerValue(confirmModel)}"`,
+		`confirm_reasoning_effort="${headerValue(confirmReasoningEffort)}"]]`,
+	].join(" ");
+
 	return [
-		"/goal",
+		header,
 		"",
 		`# ${kind}: ${title}`,
 		"",
 		document.trim(),
 		"",
-		"Use this as the active goal. Ask only for missing decisions that block execution.",
+		"Treat this approved PRD/SPEC as the active Codex task.",
+		"Implement it end-to-end, verify it with fresh evidence, and keep going until codex-loop confirms the goal is complete.",
+		"Ask only for missing decisions that block execution.",
 	].join("\n");
 }
 
-function launchCodex(cwd: string, promptFile: string): { launched: boolean; command: string; message: string } {
-	const command = `cd ${shellQuote(cwd)} && codex --no-alt-screen "$(cat ${shellQuote(promptFile)})"`;
-
-	if (process.platform !== "darwin") {
-		return {
-			launched: false,
-			command,
-			message: "Codex launch command prepared. Run it from a terminal to start Codex /goal.",
-		};
-	}
-
-	const commandFile = promptFile.replace(/\.md$/, ".command");
-	writeFileSync(commandFile, `#!/usr/bin/env bash\n${command}\n`, "utf8");
-	chmodSync(commandFile, 0o755);
-
-	const child = spawn("open", [commandFile], {
+function startCodexLoop(cwd: string, prompt: string, logFile: string, outputFile: string): number {
+	const logFd = openSync(logFile, "a");
+	const child = spawn("codex", ["exec", "--cd", cwd, "--skip-git-repo-check", "--output-last-message", outputFile, "-"], {
 		detached: true,
-		stdio: "ignore",
+		stdio: ["pipe", logFd, logFd],
 	});
+
+	child.stdin.end(prompt);
 	child.unref();
 
-	return {
-		launched: true,
-		command: `open ${shellQuote(commandFile)}`,
-		message: "Opened a macOS terminal command for Codex /goal.",
-	};
+	return child.pid ?? 0;
 }
 
-const WORKFLOW_PROMPT = `Use the grill-with-docs skill to turn the request below into an approved PRD/SPEC, then submit it to Codex /goal.
+const WORKFLOW_PROMPT = `Use the grill-with-docs skill to turn the request below into an approved PRD/SPEC, then start a Codex Loop run for the approved work.
 
 Workflow contract:
 1. Load and follow the grill-with-docs skill before drafting.
@@ -73,14 +80,14 @@ Workflow contract:
 4. Resolve terminology against CONTEXT.md or CONTEXT-MAP.md when present.
 5. Update CONTEXT.md or ADRs only when grill-with-docs says the decision belongs there.
 6. Draft a concise PRD/SPEC with: problem, goals, non-goals, user workflow, requirements, acceptance criteria, technical notes, risks, and open questions.
-7. Call submit_codex_goal with the final document. That tool will ask the user to approve or edit the output and will send the approved PRD/SPEC to Codex /goal.
+7. Call submit_codex_goal with the final document. That tool will ask the user to approve or edit the output and will start a headless codex exec run with a codex-loop activation header.
 8. If submit_codex_goal is cancelled, ask what to revise with ask_user_question.
 
 Request:`;
 
 export default function codexGoalWorkflow(pi: ExtensionAPI) {
 	pi.registerCommand("codex-goal", {
-		description: "Grill an idea into an approved PRD/SPEC, then send it to Codex /goal",
+		description: "Grill an idea into an approved PRD/SPEC, then start a Codex Loop run",
 		handler: async (args, ctx) => {
 			const request = args.trim();
 			if (!request) {
@@ -101,9 +108,9 @@ export default function codexGoalWorkflow(pi: ExtensionAPI) {
 		name: "submit_codex_goal",
 		label: "Submit Codex Goal",
 		description:
-			"Ask the user to approve or edit a completed PRD/SPEC, then send the approved document to Codex /goal.",
+			"Ask the user to approve or edit a completed PRD/SPEC, then start a headless Codex Loop run.",
 		promptSnippet:
-			"After drafting an approved PRD/SPEC for Codex, call submit_codex_goal so the user can approve it before Codex receives /goal.",
+			"After drafting an approved PRD/SPEC for Codex, call submit_codex_goal so the user can approve it before starting codex-loop.",
 		parameters: SubmitCodexGoalParams,
 		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
 			if (!ctx.hasUI) {
@@ -115,26 +122,31 @@ export default function codexGoalWorkflow(pi: ExtensionAPI) {
 
 			const kind = (params.kind || "PRD/SPEC").trim();
 			const title = params.title.trim();
+			const loopGoal =
+				params.loopGoal?.trim() ||
+				`Implement "${title}" completely and stop only after fresh verification proves the PRD/SPEC is satisfied.`;
+			const confirmModel = params.confirmModel?.trim() || "gpt-5.5";
+			const confirmReasoningEffort = params.confirmReasoningEffort?.trim() || "high";
 			const approvedDocument = await ctx.ui.editor(
-				`Review and edit ${kind} before sending to Codex /goal: ${title}`,
+				`Review and edit ${kind} before starting Codex Loop: ${title}`,
 				params.document.trim(),
 			);
 
 			if (approvedDocument === undefined || approvedDocument.trim().length === 0) {
 				return {
-					content: [{ type: "text" as const, text: "User cancelled Codex /goal submission." }],
+					content: [{ type: "text" as const, text: "User cancelled Codex Loop submission." }],
 					details: { status: "cancelled" },
 				};
 			}
 
 			const approved = await ctx.ui.confirm(
-				"Send to Codex /goal?",
-				`This will create a Codex /goal prompt for "${title}" and open it in Codex.`,
+				"Start Codex Loop?",
+				`This will start a headless codex exec run for "${title}".`,
 			);
 
 			if (!approved) {
 				return {
-					content: [{ type: "text" as const, text: "User did not approve Codex /goal submission." }],
+					content: [{ type: "text" as const, text: "User did not approve Codex Loop submission." }],
 					details: { status: "rejected", title, kind },
 				};
 			}
@@ -144,23 +156,35 @@ export default function codexGoalWorkflow(pi: ExtensionAPI) {
 
 			const stamp = new Date().toISOString().replace(/[:.]/g, "-");
 			const promptFile = join(goalDir, `${stamp}-${slugify(title)}.md`);
-			const prompt = buildCodexPrompt(kind, title, approvedDocument);
+			const logFile = join(goalDir, `${stamp}-${slugify(title)}.log`);
+			const outputFile = join(goalDir, `${stamp}-${slugify(title)}.last.md`);
+			const prompt = buildCodexLoopPrompt(
+				kind,
+				title,
+				approvedDocument,
+				loopGoal,
+				confirmModel,
+				confirmReasoningEffort,
+			);
 			writeFileSync(promptFile, prompt, "utf8");
 
-			const launch = launchCodex(ctx.cwd, promptFile);
+			const pid = startCodexLoop(ctx.cwd, prompt, logFile, outputFile);
+
 			return {
 				content: [
 					{
 						type: "text" as const,
-						text: `${launch.message}\nPrompt file: ${promptFile}\nCommand: ${launch.command}`,
+						text: `Started Codex Loop for "${title}".\nPID: ${pid}\nPrompt file: ${promptFile}\nLog file: ${logFile}\nLast message file: ${outputFile}`,
 					},
 				],
 				details: {
-					status: launch.launched ? "launched" : "prepared",
+					status: "started",
 					title,
 					kind,
+					pid,
 					promptFile,
-					command: launch.command,
+					logFile,
+					outputFile,
 				},
 			};
 		},

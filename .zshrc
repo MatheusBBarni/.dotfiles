@@ -73,8 +73,9 @@ command -v nvm >/dev/null 2>&1 && nvm use default >/dev/null 2>&1
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
 
-# GO
-export GOROOT=/usr/local/go
+# Go
+export GOPATH="$HOME/go"
+export PATH="$GOPATH/bin:$PATH"
 
 # Turso
 export PATH="$PATH:/home/adminai/.turso"

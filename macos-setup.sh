@@ -375,6 +375,35 @@ configure_pi() {
   done
 }
 
+install_codex_loop() {
+  echo "Installing Codex Loop"
+
+  if ! command -v codex >/dev/null 2>&1; then
+    echo "Codex CLI not found; skipping Codex Loop setup"
+    return
+  fi
+
+  if ! command -v go >/dev/null 2>&1; then
+    echo "Go not found; skipping Codex Loop setup"
+    return
+  fi
+
+  go install github.com/compozy/codex-loop/cmd/codex-loop@latest
+
+  local codex_loop_bin
+  codex_loop_bin="$(command -v codex-loop || true)"
+  if [[ -z "$codex_loop_bin" && -x "$HOME/go/bin/codex-loop" ]]; then
+    sudo ln -sf "$HOME/go/bin/codex-loop" "$(brew --prefix)/bin/codex-loop"
+    codex_loop_bin="$(brew --prefix)/bin/codex-loop"
+  fi
+
+  if [[ -n "$codex_loop_bin" && -x "$codex_loop_bin" ]]; then
+    "$codex_loop_bin" install
+  else
+    echo "codex-loop binary not found after install"
+  fi
+}
+
 configure_codex() {
   echo "Configuring Codex"
 
@@ -408,9 +437,10 @@ install_oh_my_zsh
 install_nvm
 
 echo "Installing CLIs"
-brew install bun node pnpm gh gemini-cli neovim watchman pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
+brew install bun node pnpm gh gemini-cli neovim watchman go pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
 brew install --cask codex
 configure_codex
+install_codex_loop
 configure_pi
 
 echo "Installing apps"
