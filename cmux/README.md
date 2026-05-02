@@ -17,7 +17,24 @@ cmux may also keep fallback settings in:
 
 ## Export from an already configured Mac
 
-Run this from the repo root on the Mac where cmux is already configured:
+Use this when one Mac already has cmux configured and you want to save that
+config into this dotfiles repo.
+
+Run these commands on the Mac where cmux already works.
+
+First, open Terminal and go to this repo:
+
+```sh
+cd ~/.dotfiles
+```
+
+If your clone lives somewhere else, use that path instead. For example:
+
+```sh
+cd ~/projects/.dotfiles
+```
+
+Then run this export block from inside the repo:
 
 ```sh
 mkdir -p cmux/ghostty
@@ -39,20 +56,52 @@ else
 fi
 ```
 
+The commands above copy files from your Mac's live cmux/Ghostty config folders
+into this repo:
+
+- from `~/.config/cmux/settings.json` to `cmux/settings.json`
+- from `~/.config/ghostty/config` to `cmux/ghostty/config`
+
 Review the copied files before committing. In particular, check for local paths,
 socket settings, passwords, tokens, and machine-specific values.
 
-After exporting, run:
+Still on the configured Mac, check what changed:
 
 ```sh
 git diff -- cmux
 ```
 
-On a new Mac, run the setup script from the repo root:
+If the diff looks right, commit and push it:
+
+```sh
+git add cmux
+git commit -m "feat: add cmux config"
+git push
+```
+
+## Install on a new Mac
+
+On the new Mac, clone or update this repo first:
+
+```sh
+git clone git@github.com:MatheusBBarni/.dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+```
+
+If the repo is already cloned:
+
+```sh
+cd ~/.dotfiles
+git pull
+```
+
+Then run the setup script from inside the repo:
 
 ```sh
 ./macos-setup.sh
 ```
+
+The setup script links the committed cmux files into the live config paths.
 
 To reload cmux without restarting the app:
 
