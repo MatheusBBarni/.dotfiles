@@ -330,11 +330,19 @@ configure_antigravity() {
 }
 
 configure_cmux() {
-  echo "Configuring cmux CLI"
+  echo "Configuring cmux"
 
   local cmux_bin="/Applications/cmux.app/Contents/Resources/bin/cmux"
   if [[ -x "$cmux_bin" ]]; then
     sudo ln -sf "$cmux_bin" "$(brew --prefix)/bin/cmux"
+  fi
+
+  if [[ -f "$DOTFILES_DIR/cmux/settings.json" ]]; then
+    link_file "$DOTFILES_DIR/cmux/settings.json" "$HOME/.config/cmux/settings.json"
+  fi
+
+  if [[ -f "$DOTFILES_DIR/cmux/ghostty/config" ]]; then
+    link_file "$DOTFILES_DIR/cmux/ghostty/config" "$HOME/.config/ghostty/config"
   fi
 }
 
@@ -371,7 +379,7 @@ install_oh_my_zsh
 install_nvm
 
 echo "Installing CLIs"
-brew install bun node pnpm gh gemini-cli neovim watchman compozy/tap/compozy tursodatabase/tap/turso
+brew install bun node pnpm gh gemini-cli neovim watchman pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
 brew install --cask codex
 configure_codex
 
