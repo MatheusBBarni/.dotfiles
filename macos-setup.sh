@@ -346,6 +346,35 @@ configure_cmux() {
   fi
 }
 
+configure_pi() {
+  echo "Configuring Pi"
+
+  if ! command -v pi >/dev/null 2>&1; then
+    echo "Pi CLI not found; skipping Pi extension setup"
+    return
+  fi
+
+  pi install npm:pi-subagents
+
+  mkdir -p "$HOME/.pi/agent/agents"
+  for agent in "$DOTFILES_DIR"/ai/agents/pi/*.md; do
+    [[ -f "$agent" ]] || continue
+    link_file "$agent" "$HOME/.pi/agent/agents/$(basename "$agent")"
+  done
+
+  mkdir -p "$HOME/.pi/agent/extensions"
+  for extension in "$DOTFILES_DIR"/ai/extensions/pi/*.{ts,js}; do
+    [[ -f "$extension" ]] || continue
+    link_file "$extension" "$HOME/.pi/agent/extensions/$(basename "$extension")"
+  done
+
+  mkdir -p "$HOME/.pi/agent/skills"
+  for skill in "$DOTFILES_DIR"/ai/skills/*; do
+    [[ -d "$skill" ]] || continue
+    link_file "$skill" "$HOME/.pi/agent/skills/$(basename "$skill")"
+  done
+}
+
 configure_codex() {
   echo "Configuring Codex"
 
@@ -382,6 +411,7 @@ echo "Installing CLIs"
 brew install bun node pnpm gh gemini-cli neovim watchman pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
 brew install --cask codex
 configure_codex
+configure_pi
 
 echo "Installing apps"
 brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity zed tailscale android-studio android-platform-tools discord
