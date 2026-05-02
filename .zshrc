@@ -74,8 +74,9 @@ export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
 
 # Go
+export GOROOT="$HOME/.local/go"
 export GOPATH="$HOME/go"
-export PATH="$GOPATH/bin:$PATH"
+export PATH="$GOROOT/bin:$GOPATH/bin:$PATH"
 
 # Turso
 export PATH="$PATH:/home/adminai/.turso"
