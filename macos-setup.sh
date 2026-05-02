@@ -437,14 +437,14 @@ install_oh_my_zsh
 install_nvm
 
 echo "Installing CLIs"
-brew install bun node pnpm gh gemini-cli neovim watchman go pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
+brew install bun node pnpm gh gemini-cli neovim watchman go docker docker-compose docker-buildx pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
 brew install --cask codex
 configure_codex
 install_codex_loop
 configure_pi
 
 echo "Installing apps"
-brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity zed tailscale android-studio android-platform-tools discord
+brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity zed tailscale docker android-studio android-platform-tools discord
 configure_zed
 install_gemini_desktop
 install_handy
