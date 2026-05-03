@@ -72,6 +72,12 @@ command -v nvm >/dev/null 2>&1 && nvm use default >/dev/null 2>&1
 # Rust
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
+# Java
+if [[ -x /usr/libexec/java_home ]]; then
+	export JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
+	[[ -n "$JAVA_HOME" ]] && export PATH="$JAVA_HOME/bin:$PATH"
+fi
+
 # Android
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH

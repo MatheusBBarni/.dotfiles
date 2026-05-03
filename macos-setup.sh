@@ -185,6 +185,13 @@ install_rust() {
   rustup component add rustfmt clippy rust-analyzer
 }
 
+install_java_kotlin() {
+  echo "Installing Java and Kotlin"
+
+  brew install --cask temurin
+  brew install kotlin gradle
+}
+
 install_gemini_desktop() {
   echo "Installing Gemini desktop app"
 
@@ -458,6 +465,7 @@ install_base_packages
 install_oh_my_zsh
 install_nvm
 install_rust
+install_java_kotlin
 
 echo "Installing CLIs"
 brew install bun node pnpm gh gemini-cli neovim watchman go docker docker-compose docker-buildx pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
