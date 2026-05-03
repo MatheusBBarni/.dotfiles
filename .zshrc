@@ -69,6 +69,9 @@ alias dsal='docker kill $(docker ps -q)'
 
 command -v nvm >/dev/null 2>&1 && nvm use default >/dev/null 2>&1
 
+# Rust
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+
 # Android
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH

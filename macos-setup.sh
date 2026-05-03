@@ -163,6 +163,28 @@ install_nvm() {
   nvm use default
 }
 
+install_rust() {
+  echo "Installing Rust"
+
+  export CARGO_HOME="${CARGO_HOME:-$HOME/.cargo}"
+  export RUSTUP_HOME="${RUSTUP_HOME:-$HOME/.rustup}"
+  export PATH="$CARGO_HOME/bin:$PATH"
+
+  if ! command -v rustup >/dev/null 2>&1; then
+    brew install rustup-init
+    rustup-init -y --no-modify-path
+  fi
+
+  if [[ -f "$CARGO_HOME/env" ]]; then
+    # shellcheck disable=SC1091
+    . "$CARGO_HOME/env"
+  fi
+
+  rustup toolchain install stable
+  rustup default stable
+  rustup component add rustfmt clippy rust-analyzer
+}
+
 install_gemini_desktop() {
   echo "Installing Gemini desktop app"
 
@@ -435,6 +457,7 @@ install_brew
 install_base_packages
 install_oh_my_zsh
 install_nvm
+install_rust
 
 echo "Installing CLIs"
 brew install bun node pnpm gh gemini-cli neovim watchman go docker docker-compose docker-buildx pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
