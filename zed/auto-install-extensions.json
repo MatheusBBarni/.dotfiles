@@ -12,6 +12,7 @@
                                     "nord":  true,
                                     "ocaml":  true,
                                     "prisma":  true,
+                                    "rescript":  true,
                                     "toml":  true
                                 }
 }
