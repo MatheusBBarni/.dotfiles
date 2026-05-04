@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Workflow"
+  short_description: "Commit, PR, review, merge, and close issue"
+  default_prompt: "Use $git-workflow to commit with type feat, open and review a PR, address comments, merge it, and close issue 123."
