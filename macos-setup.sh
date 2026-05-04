@@ -4,6 +4,18 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NODE_VERSION="24"
 ATLAS_BOOKMARKS_HTML=""
+DOCK_APPS=(
+  "/Applications/ChatGPT Atlas.app"
+  "/Applications/cmux.app"
+  "/Applications/Zed.app"
+  "/Applications/Codex.app"
+  "/Applications/Antigravity.app"
+  "/Applications/Gemini.app"
+  "/Applications/Tailscale.app"
+  "/Applications/Docker.app"
+  "/Applications/Discord.app"
+  "/System/Applications/System Settings.app"
+)
 
 usage() {
   cat <<EOF
@@ -77,7 +89,29 @@ install_brew() {
 
 install_base_packages() {
   echo "Installing base packages"
-  brew install git mas
+  brew install git mas dockutil
+}
+
+configure_dock() {
+  echo "Configuring Dock"
+
+  if ! command -v dockutil >/dev/null 2>&1; then
+    echo "dockutil not found; skipping Dock setup"
+    return
+  fi
+
+  dockutil --remove all --no-restart >/dev/null 2>&1 || true
+
+  local app
+  for app in "${DOCK_APPS[@]}"; do
+    if [[ -d "$app" ]]; then
+      dockutil --add "$app" --no-restart
+    else
+      echo "Dock app not found; skipping: $app"
+    fi
+  done
+
+  killall Dock >/dev/null 2>&1 || true
 }
 
 configure_zed() {
@@ -485,5 +519,6 @@ configure_atlas_bookmarks
 
 configure_cmux
 configure_antigravity
+configure_dock
 
 echo "Done"
