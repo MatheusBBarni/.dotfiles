@@ -510,7 +510,7 @@ install_codex_loop
 configure_pi
 
 echo "Installing apps"
-brew install --cask rectangle raycast chatgpt-atlas codex-app cmux antigravity zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord
+brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux antigravity zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord
 configure_zed
 install_gemini_desktop
 install_handy
