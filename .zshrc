@@ -41,7 +41,38 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # GIT
-[ -f "$HOME/start-ssh.sh" ] && . "$HOME/start-ssh.sh"
+# SSH agent / GitHub
+#
+# Load the default GitHub SSH key into macOS Keychain-backed ssh-agent so
+# fetch/pull/push only ask for the key passphrase once.
+if [[ "$OSTYPE" == darwin* ]]; then
+	SSH_KEY="$HOME/.ssh/id_ed25519"
+	SSH_CONFIG="$HOME/.ssh/config"
+
+	if [[ -f "$SSH_KEY" ]]; then
+		mkdir -p "$HOME/.ssh"
+		chmod 700 "$HOME/.ssh"
+
+		if [[ ! -f "$SSH_CONFIG" ]] || ! grep -q "Host github.com" "$SSH_CONFIG"; then
+			cat >> "$SSH_CONFIG" <<EOF
+
+Host github.com
+	AddKeysToAgent yes
+	UseKeychain yes
+	IdentityFile ~/.ssh/id_ed25519
+EOF
+			chmod 600 "$SSH_CONFIG"
+		fi
+
+		if ! ssh-add -l 2>/dev/null | grep -q "$SSH_KEY"; then
+			ssh-add --apple-use-keychain "$SSH_KEY" >/dev/null 2>&1 \
+				|| ssh-add -K "$SSH_KEY" >/dev/null 2>&1 \
+				|| ssh-add "$SSH_KEY"
+		fi
+	fi
+
+	unset SSH_KEY SSH_CONFIG
+fi
 
 alias ga="git add ."
 alias gpush="git push"
