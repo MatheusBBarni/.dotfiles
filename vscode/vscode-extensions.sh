@@ -20,8 +20,6 @@ extensions=(
   esbenp.prettier-vscode
   arcticicestudio.nord-visual-studio-code
   aliariff.auto-add-brackets
-  ms-azuretools.vscode-docker
-  ms-vscode-remote.remote-containers
   emmanuelbeziat.vscode-great-icons
   miguelsolorio.fluent-icons
   expo.vscode-expo-tools

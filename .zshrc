@@ -99,3 +99,9 @@ alias coo="codex --yolo"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/matheusbbarni/.antigravity/antigravity/bin:$PATH"
+
+# Added by Factory Desktop
+export PATH="$HOME/.local/bin:$PATH"

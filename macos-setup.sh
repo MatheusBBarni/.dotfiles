@@ -9,7 +9,6 @@ DOCK_APPS=(
   "/Applications/cmux.app"
   "/Applications/Zed.app"
   "/Applications/Codex.app"
-  "/Applications/Antigravity.app"
   "/Applications/Gemini.app"
   "/Applications/YouTube Music.app"
   "/Applications/Tailscale.app"
@@ -198,6 +197,14 @@ install_nvm() {
   nvm use default
 }
 
+install_bun() {
+  echo "Installing Bun"
+
+  if ! command -v bun >/dev/null 2>&1; then
+    curl -fsSL https://bun.sh/install | bash
+  fi
+}
+
 install_rust() {
   echo "Installing Rust"
 
@@ -375,24 +382,6 @@ configure_atlas_bookmarks() {
   echo "$bookmarks_file"
 }
 
-configure_antigravity() {
-  echo "Configuring Antigravity"
-  link_file \
-    "$DOTFILES_DIR/vscode/vscode-settings.json" \
-    "$HOME/Library/Application Support/Antigravity/User/settings.json"
-
-  local antigravity_cli="/Applications/Antigravity.app/Contents/Resources/app/bin/antigravity"
-  if [[ ! -x "$antigravity_cli" ]]; then
-    antigravity_cli="$(command -v antigravity || true)"
-  fi
-
-  if [[ -n "$antigravity_cli" && -x "$antigravity_cli" ]]; then
-    EDITOR_CLI="$antigravity_cli" "$DOTFILES_DIR/vscode/vscode-extensions.sh"
-  else
-    echo "Antigravity CLI not found; skipping extension install"
-  fi
-}
-
 configure_cmux() {
   echo "Configuring cmux"
 
@@ -439,35 +428,6 @@ configure_pi() {
   done
 }
 
-install_codex_loop() {
-  echo "Installing Codex Loop"
-
-  if ! command -v codex >/dev/null 2>&1; then
-    echo "Codex CLI not found; skipping Codex Loop setup"
-    return
-  fi
-
-  if ! command -v go >/dev/null 2>&1; then
-    echo "Go not found; skipping Codex Loop setup"
-    return
-  fi
-
-  go install github.com/compozy/codex-loop/cmd/codex-loop@latest
-
-  local codex_loop_bin
-  codex_loop_bin="$(command -v codex-loop || true)"
-  if [[ -z "$codex_loop_bin" && -x "$HOME/go/bin/codex-loop" ]]; then
-    sudo ln -sf "$HOME/go/bin/codex-loop" "$(brew --prefix)/bin/codex-loop"
-    codex_loop_bin="$(brew --prefix)/bin/codex-loop"
-  fi
-
-  if [[ -n "$codex_loop_bin" && -x "$codex_loop_bin" ]]; then
-    "$codex_loop_bin" install
-  else
-    echo "codex-loop binary not found after install"
-  fi
-}
-
 configure_codex() {
   echo "Configuring Codex"
 
@@ -499,27 +459,25 @@ install_brew
 install_base_packages
 install_oh_my_zsh
 install_nvm
+install_bun
 install_rust
 install_java_kotlin
 
 echo "Installing CLIs"
-brew install bun node pnpm gh gemini-cli neovim watchman go ocaml opam dune docker docker-compose docker-buildx pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
+brew install node pnpm gh gemini-cli neovim watchman go ocaml opam dune docker docker-compose docker-buildx pi-coding-agent tursodatabase/tap/turso
 brew install --cask codex
 configure_codex
-install_codex_loop
 configure_pi
 
 echo "Installing apps"
-brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux antigravity zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord
+brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord
 configure_zed
 install_gemini_desktop
 install_handy
-install_xcode
 configure_atlas_extensions
 configure_atlas_bookmarks
 
 configure_cmux
-configure_antigravity
 configure_dock
 
 echo "Done"

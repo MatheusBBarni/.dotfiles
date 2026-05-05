@@ -19,6 +19,13 @@
     },
   },
   {
+    "context": "Editor",
+    "bindings": {
+      "cmd-[": "pane::ActivatePreviousItem",
+      "cmd-]": "pane::ActivateNextItem"
+    }
+  },
+  {
     "bindings": {
       "ctrl-i": "agent::Toggle"
     }
@@ -38,13 +45,15 @@
   {
     "context": "Workspace",
     "bindings": {
-      "ctrl-b": "workspace::ToggleRightDock"
+      "cmd-b": "workspace::ToggleRightDock",
+      "cmd-[": "pane::ActivatePreviousItem",
+      "cmd-]": "pane::ActivateNextItem"
     }
   },
   {
     "context": "Workspace",
     "unbind": {
-      "ctrl-alt-b": "workspace::ToggleRightDock"
+      "cmd-alt-b": "workspace::ToggleRightDock"
     }
   }
 ]
