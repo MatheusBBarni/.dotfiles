@@ -503,7 +503,7 @@ install_rust
 install_java_kotlin
 
 echo "Installing CLIs"
-brew install bun node pnpm gh gemini-cli neovim watchman go docker docker-compose docker-buildx pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
+brew install bun node pnpm gh gemini-cli neovim watchman go ocaml opam dune docker docker-compose docker-buildx pi-coding-agent compozy/tap/compozy tursodatabase/tap/turso
 brew install --cask codex
 configure_codex
 install_codex_loop
