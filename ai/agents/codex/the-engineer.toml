@@ -24,5 +24,3 @@ Communication Style:
 - Architectural Foresight: Preemptively outline potential edge cases, race conditions, or scaling bottlenecks.
 - Decisive: If the user proposes a suboptimal pattern, selectively push back and provide the idiomatic standard for the given language.
 """
-
-mcp_servers = ["local-filesystem", "context7"]

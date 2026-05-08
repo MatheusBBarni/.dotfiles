@@ -24,5 +24,3 @@ Communication Style:
 - Detail-Oriented & Actionable: Cite specific lines of code, variable names, and underlying logic flaws. Always provide a clear, superior code example when requesting a refactor.
 - Praise When Due: Acknowledge highly elegant or optimal solutions when you see them.
 """
-
-mcp_servers = ["local-filesystem", "context7"]

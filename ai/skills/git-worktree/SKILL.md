@@ -11,15 +11,15 @@ Create a Git worktree from the current repository under:
 ~/projects/worktree/{half-uuid}/{original-repo-folder}
 ```
 
-For example, from `/home/adminai/projects/pokemeta-tracker`, create:
+For example, from `~/projects/pokemeta-tracker`, create:
 
 ```text
-/home/adminai/projects/worktree/abcd1234-ef56-7890/pokemeta-tracker
+~/projects/worktree/abcd1234-ef56-7890/pokemeta-tracker
 ```
 
 ## Workflow
 
-1. Confirm the current directory is inside a Git worktree:
+1. Confirm the current directory is inside a Git repository:
 
 ```bash
 git rev-parse --show-toplevel
@@ -28,19 +28,19 @@ git rev-parse --show-toplevel
 2. Use the bundled script from the skill directory:
 
 ```bash
-bash /home/adminai/.codex/skills/git-worktree/scripts/create_worktree.sh
+bash ~/.codex/skills/git-worktree/scripts/create_worktree.sh
 ```
 
 3. If the user provides a branch name, create a branch in the new worktree:
 
 ```bash
-bash /home/adminai/.codex/skills/git-worktree/scripts/create_worktree.sh --branch feature/my-task
+bash ~/.codex/skills/git-worktree/scripts/create_worktree.sh --branch feature/my-task
 ```
 
 4. If the user provides a base ref, pass it explicitly:
 
 ```bash
-bash /home/adminai/.codex/skills/git-worktree/scripts/create_worktree.sh --branch feature/my-task --base origin/main
+bash ~/.codex/skills/git-worktree/scripts/create_worktree.sh --branch feature/my-task --base origin/main
 ```
 
 5. Report the created path and the command to enter it.

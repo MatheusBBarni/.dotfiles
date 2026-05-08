@@ -122,7 +122,13 @@ export PATH="$GOROOT/bin:$GOPATH/bin:$PATH"
 export PATH="$PATH:/home/adminai/.turso"
 
 # Codex
-alias coo="codex --yolo"
+alias coo='codex --dangerously-bypass-approvals-and-sandbox --model gpt-5.5'
+alias coosp='codex --dangerously-bypass-approvals-and-sandbox --model gpt-5.3-codex-spark --config model_reasoning_effort=\"xhigh\"'
+
+# Compozy completions (workspace-aware tasks)
+if [[ -f "$HOME/.zsh/compozy-completion/compozy-completion.plugin.zsh" ]]; then
+  source "$HOME/.zsh/compozy-completion/compozy-completion.plugin.zsh"
+fi
 
 # bun completions
 [ -s "/home/adminai/.bun/_bun" ] && source "/home/adminai/.bun/_bun"
