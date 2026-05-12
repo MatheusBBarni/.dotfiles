@@ -1,0 +1,7 @@
+---
+"workspace:activate_next_tab": "shift-cmd-}"
+/set-tab-color: ctrl-cmd-c
+"workspace:activate_prev_tab": "shift-cmd-{"
+"workspace:rename_active_tab": cmd-r
+"workspace:move_tab_right": shift-cmd-down
+"workspace:move_tab_left": shift-cmd-up

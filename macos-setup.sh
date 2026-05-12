@@ -6,10 +6,9 @@ NODE_VERSION="24"
 ATLAS_BOOKMARKS_HTML=""
 DOCK_APPS=(
   "/Applications/ChatGPT Atlas.app"
-  "/Applications/cmux.app"
+  "/Applications/Warp.app"
   "/Applications/Zed.app"
   "/Applications/Codex.app"
-  "/Applications/Gemini.app"
   "/Applications/YouTube Music.app"
   "/Applications/Tailscale.app"
   "/Applications/Docker.app"
@@ -234,29 +233,6 @@ install_java_kotlin() {
   brew install kotlin gradle
 }
 
-install_gemini_desktop() {
-  echo "Installing Gemini desktop app"
-
-  local gemini_url
-  gemini_url="$(
-    curl -fsSL "https://gemini.google/mac/" |
-      perl -ne 'if (/href="(https:\/\/dl\.google\.com\/[^"]+)"/) { print "$1\n"; exit }'
-  )"
-  gemini_url="${gemini_url:-https://dl.google.com/release2/j33ro/release/Gemini.dmg}"
-
-  local tmp_dmg="/tmp/Gemini.dmg"
-  curl -fL "$gemini_url" -o "$tmp_dmg"
-
-  local mount_point
-  mount_point="$(mktemp -d)"
-
-  hdiutil attach "$tmp_dmg" -mountpoint "$mount_point" -nobrowse -quiet
-  sudo rm -rf "/Applications/Gemini.app"
-  sudo ditto "$mount_point/Gemini.app" "/Applications/Gemini.app"
-  hdiutil detach "$mount_point" -quiet
-  rm -rf "$mount_point" "$tmp_dmg"
-}
-
 install_handy() {
   echo "Installing Handy"
 
@@ -382,20 +358,27 @@ configure_atlas_bookmarks() {
   echo "$bookmarks_file"
 }
 
-configure_cmux() {
-  echo "Configuring cmux"
+configure_warp() {
+  echo "Configuring Warp"
 
-  local cmux_bin="/Applications/cmux.app/Contents/Resources/bin/cmux"
-  if [[ -x "$cmux_bin" ]]; then
-    sudo ln -sf "$cmux_bin" "$(brew --prefix)/bin/cmux"
+  local warp_config_dir="$HOME/.warp"
+  mkdir -p "$warp_config_dir"
+
+  if [[ -f "$DOTFILES_DIR/warp/settings.toml" ]]; then
+    link_file "$DOTFILES_DIR/warp/settings.toml" "$warp_config_dir/settings.toml"
   fi
 
-  if [[ -f "$DOTFILES_DIR/cmux/settings.json" ]]; then
-    link_file "$DOTFILES_DIR/cmux/settings.json" "$HOME/.config/cmux/settings.json"
+  if [[ -f "$DOTFILES_DIR/warp/keybindings.yaml" ]]; then
+    link_file "$DOTFILES_DIR/warp/keybindings.yaml" "$warp_config_dir/keybindings.yaml"
   fi
 
-  if [[ -f "$DOTFILES_DIR/cmux/ghostty/config" ]]; then
-    link_file "$DOTFILES_DIR/cmux/ghostty/config" "$HOME/.config/ghostty/config"
+  if [[ -d "$DOTFILES_DIR/warp/tab_configs" ]]; then
+    mkdir -p "$warp_config_dir/tab_configs"
+    local tab_config
+    for tab_config in "$DOTFILES_DIR"/warp/tab_configs/*.toml; do
+      [[ -f "$tab_config" ]] || continue
+      link_file "$tab_config" "$warp_config_dir/tab_configs/$(basename "$tab_config")"
+    done
   fi
 }
 
@@ -464,20 +447,22 @@ install_rust
 install_java_kotlin
 
 echo "Installing CLIs"
-brew install node pnpm gh gemini-cli neovim watchman go ocaml opam dune docker docker-compose docker-buildx pi-coding-agent tursodatabase/tap/turso
+brew install node pnpm gh neovim watchman go ocaml opam dune docker docker-compose docker-buildx tursodatabase/tap/turso
+
+echo "Installing global Bun packages"
+bun add -g @earendil-works/pi-coding-agent opencode-ai
 brew install --cask codex
 configure_codex
 configure_pi
 
 echo "Installing apps"
-brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord
+brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app warp zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord
 configure_zed
-install_gemini_desktop
 install_handy
 configure_atlas_extensions
 configure_atlas_bookmarks
 
-configure_cmux
+configure_warp
 configure_dock
 
 echo "Done"

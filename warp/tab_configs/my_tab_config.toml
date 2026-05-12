@@ -1,0 +1,10 @@
+name = "My Tab Config"
+color = "magenta"
+
+[[panes]]
+id = "p1"
+type = "terminal"
+is_focused = true
+directory = "/Users/matheusbbarni/projects/bun-symphony-orchestrator"
+
+[params]

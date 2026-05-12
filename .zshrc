@@ -125,6 +125,16 @@ export PATH="$PATH:/home/adminai/.turso"
 alias coo='codex --dangerously-bypass-approvals-and-sandbox --model gpt-5.5'
 alias coosp='codex --dangerously-bypass-approvals-and-sandbox --model gpt-5.3-codex-spark --config model_reasoning_effort=\"xhigh\"'
 
+# Opencode (non-TUI message mode)
+if command -v opencode >/dev/null 2>&1; then
+	opencode_help="$(opencode --help 2>&1)"
+	if [[ "$opencode_help" == *"--yolo"* ]]; then
+		alias opc='opencode --yolo'
+	else
+		alias opc='opencode'
+	fi
+fi
+
 # Compozy completions (workspace-aware tasks)
 if [[ -f "$HOME/.zsh/compozy-completion/compozy-completion.plugin.zsh" ]]; then
   source "$HOME/.zsh/compozy-completion/compozy-completion.plugin.zsh"
