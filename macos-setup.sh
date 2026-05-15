@@ -6,7 +6,7 @@ NODE_VERSION="24"
 ATLAS_BOOKMARKS_HTML=""
 DOCK_APPS=(
   "/Applications/ChatGPT Atlas.app"
-  "/Applications/Warp.app"
+  "/Applications/cmux.app"
   "/Applications/Zed.app"
   "/Applications/Codex.app"
   "/Applications/YouTube Music.app"
@@ -358,27 +358,15 @@ configure_atlas_bookmarks() {
   echo "$bookmarks_file"
 }
 
-configure_warp() {
-  echo "Configuring Warp"
+configure_cmux() {
+  echo "Configuring cmux"
 
-  local warp_config_dir="$HOME/.warp"
-  mkdir -p "$warp_config_dir"
-
-  if [[ -f "$DOTFILES_DIR/warp/settings.toml" ]]; then
-    link_file "$DOTFILES_DIR/warp/settings.toml" "$warp_config_dir/settings.toml"
+  if [[ -f "$DOTFILES_DIR/cmux/settings.json" ]]; then
+    link_file "$DOTFILES_DIR/cmux/settings.json" "$HOME/.config/cmux/settings.json"
   fi
 
-  if [[ -f "$DOTFILES_DIR/warp/keybindings.yaml" ]]; then
-    link_file "$DOTFILES_DIR/warp/keybindings.yaml" "$warp_config_dir/keybindings.yaml"
-  fi
-
-  if [[ -d "$DOTFILES_DIR/warp/tab_configs" ]]; then
-    mkdir -p "$warp_config_dir/tab_configs"
-    local tab_config
-    for tab_config in "$DOTFILES_DIR"/warp/tab_configs/*.toml; do
-      [[ -f "$tab_config" ]] || continue
-      link_file "$tab_config" "$warp_config_dir/tab_configs/$(basename "$tab_config")"
-    done
+  if [[ -f "$DOTFILES_DIR/cmux/ghostty/config" ]]; then
+    link_file "$DOTFILES_DIR/cmux/ghostty/config" "$HOME/.config/ghostty/config"
   fi
 }
 
@@ -456,13 +444,13 @@ configure_codex
 configure_pi
 
 echo "Installing apps"
-brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app warp zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord
+brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord
 configure_zed
 install_handy
 configure_atlas_extensions
 configure_atlas_bookmarks
 
-configure_warp
+configure_cmux
 configure_dock
 
 echo "Done"
