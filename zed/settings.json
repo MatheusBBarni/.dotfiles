@@ -88,6 +88,12 @@
   ],
   "ui_font_weight": 450.0,
   "agent_servers": {
+    "pi-acp": {
+      "favorite_models": [
+        "zai/glm-5.1"
+      ],
+      "type": "registry"
+    },
     "claude-acp": {
       "favorite_config_option_values": {
         "effort": [
@@ -105,10 +111,10 @@
       },
       "type": "registry"
     },
-    "glm-acp-agent": {
-      "type": "registry"
-    },
     "codex-acp": {
+      "default_config_options": {
+        "mode": "full-access"
+      },
       "favorite_config_option_values": {
         "model": ["gpt-5.4"],
         "reasoning_effort": ["xhigh"],
@@ -126,11 +132,13 @@
     "biome": true,
     "catppuccin": true,
     "catppuccin-icons": true,
+    "codex-acp": true,
     "git-firefly": true,
     "html": true,
     "make": true,
     "mcp-server-context7": true,
     "mcp-server-github": true,
+    "pi-acp": true,
     "nord": true,
     "ocaml": true,
     "prisma": true,
