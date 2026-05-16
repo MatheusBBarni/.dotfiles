@@ -45,7 +45,11 @@
   {
     "context": "AcpThread > Editor",
     "bindings": {
-      "ctrl-shift-i": "agent::ToggleProfileSelector"
+      "ctrl-shift-i": "agent::ToggleProfileSelector",
+      "cmd-{": "multi_workspace::PreviousThread",
+      "cmd-}": "multi_workspace::NextThread",
+      "cmd-shift-[": "multi_workspace::PreviousThread",
+      "cmd-shift-]": "multi_workspace::NextThread"
     }
   },
   {
@@ -59,7 +63,11 @@
     "bindings": {
       "cmd-b": "workspace::ToggleRightDock",
       "cmd-[": "pane::ActivatePreviousItem",
-      "cmd-]": "pane::ActivateNextItem"
+      "cmd-]": "pane::ActivateNextItem",
+      "cmd-{": "multi_workspace::PreviousThread",
+      "cmd-}": "multi_workspace::NextThread",
+      "cmd-shift-[": "multi_workspace::PreviousThread",
+      "cmd-shift-]": "multi_workspace::NextThread"
     }
   },
   {
