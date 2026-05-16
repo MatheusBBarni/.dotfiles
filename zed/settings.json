@@ -88,6 +88,23 @@
   ],
   "ui_font_weight": 450.0,
   "agent_servers": {
+    "claude-acp": {
+      "favorite_config_option_values": {
+        "effort": [
+          "high"
+        ],
+        "model": [
+          "opus"
+        ],
+        "mode": [
+          "bypassPermissions"
+        ]
+      },
+      "default_config_options": {
+        "mode": "bypassPermissions"
+      },
+      "type": "registry"
+    },
     "glm-acp-agent": {
       "type": "registry"
     },

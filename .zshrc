@@ -155,3 +155,4 @@ export PATH="$HOME/.local/bin:$PATH"
 
 export OPENCODE_API_KEY="sk-yt2Q8eUAZKAtGXK5dfcAsLI0qXhMSn9wRSml5GmHx8YMwLKJnKKrehUUuaVe2b3z"
 alias ccc="claude --dangerously-skip-permissions"
+alias cccl="claude --dangerously-skip-permissions --effort low"
