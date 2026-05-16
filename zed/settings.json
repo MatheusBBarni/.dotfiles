@@ -112,6 +112,7 @@
       "type": "registry"
     },
     "codex-acp": {
+      "default_mode": "full-access",
       "default_config_options": {
         "mode": "full-access"
       },
