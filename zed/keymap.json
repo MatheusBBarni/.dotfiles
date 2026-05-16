@@ -28,6 +28,10 @@
   {
     "bindings": {
       "cmd-i": "agent::Toggle",
+      "cmd-ctrl-v": [
+        "agent::NewExternalAgentThread",
+        { "agent": { "custom": { "name": "claude-acp" } } }
+      ],
       "cmd-ctrl-c": [
         "agent::NewExternalAgentThread",
         { "agent": { "custom": { "name": "codex-acp" } } }
