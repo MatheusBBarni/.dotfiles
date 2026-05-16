@@ -7,6 +7,19 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "language_models": {
+    "opencode": {
+      "show_free_models": false,
+      "show_zen_models": false
+    }
+  },
+  "context_servers": {
+    "mcp-server-github": {
+      "enabled": true,
+      "remote": false,
+      "settings": {}
+    }
+  },
   "cli_default_open_behavior": "existing_window",
   "outline_panel": {
     "dock": "right",
@@ -15,6 +28,21 @@
     "dock": "right",
   },
   "agent": {
+    "default_profile": "full",
+    "profiles": {
+      "full": {
+        "name": "Full",
+        "tools": {},
+        "enable_all_context_servers": false,
+        "context_servers": {}
+      }
+    },
+    "default_model": {
+      "provider": "opencode",
+      "model": "go/deepseek-v4-pro",
+      "enable_thinking": true,
+      "effort": "max"
+    },
     "dock": "left",
     "favorite_models": [],
     "model_parameters": [],
@@ -60,11 +88,8 @@
   ],
   "ui_font_weight": 450.0,
   "agent_servers": {
-    "gemini": {
-      "type": "registry",
-    },
-    "claude-acp": {
-      "type": "registry",
+    "glm-acp-agent": {
+      "type": "registry"
     },
     "codex-acp": {
       "favorite_config_option_values": {

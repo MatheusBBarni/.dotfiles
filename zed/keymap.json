@@ -27,7 +27,7 @@
   },
   {
     "bindings": {
-      "ctrl-i": "agent::Toggle"
+      "cmd-i": "agent::Toggle"
     }
   },
   {
