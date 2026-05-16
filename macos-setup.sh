@@ -378,7 +378,62 @@ configure_pi() {
     return
   fi
 
+  pi install npm:amp-themes
   pi install npm:pi-subagents
+  pi install npm:@matheusbbarni/pi-goal-extension
+  pi install npm:@matheusbbarni/pi-message-queue
+  pi install npm:@matheusbbarni/pi-stitch-mcp
+
+  local settings_file="$HOME/.pi/agent/settings.json"
+  mkdir -p "$HOME/.pi/agent"
+
+  local -a required_packages=(
+    "npm:amp-themes"
+    "npm:pi-subagents"
+    "npm:@matheusbbarni/pi-goal-extension"
+    "npm:@matheusbbarni/pi-message-queue"
+    "npm:@matheusbbarni/pi-stitch-mcp"
+  )
+
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "$settings_file" "${required_packages[@]}" <<'PY'
+import json
+import os
+import sys
+
+settings_path = sys.argv[1]
+required_packages = sys.argv[2:]
+theme = "amp-dark"
+
+current = {}
+if os.path.exists(settings_path):
+    try:
+        with open(settings_path, "r", encoding="utf-8") as f:
+            content = f.read().strip()
+            if content:
+                current = json.loads(content)
+    except Exception:
+        current = {}
+
+packages = current.get("packages", [])
+if not isinstance(packages, list):
+    packages = []
+
+for package in required_packages:
+    if package not in packages:
+        packages.append(package)
+
+current["packages"] = packages
+current["theme"] = theme
+
+os.makedirs(os.path.dirname(settings_path), exist_ok=True)
+with open(settings_path, "w", encoding="utf-8") as f:
+    json.dump(current, f, indent=2)
+    f.write("\n")
+PY
+  else
+    echo "python3 not found; skipping Pi settings.json update"
+  fi
 
   mkdir -p "$HOME/.pi/agent/agents"
   for agent in "$DOTFILES_DIR"/ai/agents/pi/*.md; do
