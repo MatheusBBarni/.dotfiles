@@ -27,7 +27,15 @@
   },
   {
     "bindings": {
-      "cmd-i": "agent::Toggle"
+      "cmd-i": "agent::Toggle",
+      "cmd-ctrl-c": [
+        "agent::NewExternalAgentThread",
+        { "agent": { "custom": { "name": "codex-acp" } } }
+      ],
+      "cmd-ctrl-p": [
+        "agent::NewExternalAgentThread",
+        { "agent": { "custom": { "name": "pi-acp" } } }
+      ]
     }
   },
   {
