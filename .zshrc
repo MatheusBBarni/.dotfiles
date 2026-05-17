@@ -138,6 +138,8 @@ fi
 # Compozy completions (workspace-aware tasks)
 if [[ -f "$HOME/.zsh/compozy-completion/compozy-completion.plugin.zsh" ]]; then
   source "$HOME/.zsh/compozy-completion/compozy-completion.plugin.zsh"
+elif [[ -f "$HOME/projects/compozy/zsh/compozy-completion/compozy-completion.plugin.zsh" ]]; then
+  source "$HOME/projects/compozy/zsh/compozy-completion/compozy-completion.plugin.zsh"
 fi
 
 # bun completions
