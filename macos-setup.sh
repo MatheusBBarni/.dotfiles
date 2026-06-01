@@ -98,7 +98,9 @@ install_brew() {
 
 install_base_packages() {
   echo "Installing base packages"
-  brew install git mas dockutil yazi
+  brew install git mas dockutil
+  brew install yazi ffmpeg-full sevenzip jq poppler fd ripgrep fzf zoxide resvg imagemagick-full font-symbols-only-nerd-font
+  brew link ffmpeg-full imagemagick-full -f --overwrite
 }
 
 configure_dock() {
