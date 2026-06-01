@@ -4,6 +4,7 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NODE_VERSION="24"
 ATLAS_BOOKMARKS_HTML=""
+BETTERVIM_LICENSE=""
 DOCK_APPS=(
   "/Applications/ChatGPT Atlas.app"
   "/Applications/cmux.app"
@@ -22,6 +23,7 @@ Usage: $0 [options]
 
 Options:
   --atlas-bookmarks-html PATH  Local Brave/Chrome bookmarks HTML export to import into Atlas
+  --bettervim-license LICENSE  License key for bettervim installation (required)
   -h, --help                   Show this help
 EOF
 }
@@ -35,6 +37,14 @@ parse_args() {
           exit 1
         fi
         ATLAS_BOOKMARKS_HTML="$2"
+        shift 2
+        ;;
+      --bettervim-license)
+        if [[ $# -lt 2 ]]; then
+          echo "--bettervim-license requires a license value"
+          exit 1
+        fi
+        BETTERVIM_LICENSE="$2"
         shift 2
         ;;
       -h | --help)
@@ -88,7 +98,7 @@ install_brew() {
 
 install_base_packages() {
   echo "Installing base packages"
-  brew install git mas dockutil
+  brew install git mas dockutil yazi
 }
 
 configure_dock() {
@@ -232,6 +242,22 @@ install_rust() {
   rustup toolchain install stable
   rustup default stable
   rustup component add rustfmt clippy rust-analyzer
+}
+
+install_fonts() {
+  echo "Installing fonts"
+  brew install --cask font-space-mono-nerd-font
+}
+
+install_bettervim() {
+  echo "Installing bettervim"
+
+  if [[ -z "$BETTERVIM_LICENSE" ]]; then
+    echo "bettervim license is missing. Pass --bettervim-license LICENSE to this script."
+    exit 1
+  fi
+
+  curl -L "https://bettervim.com/install/$BETTERVIM_LICENSE" | bash
 }
 
 install_java_kotlin() {
@@ -487,6 +513,12 @@ configure_codex() {
 
 parse_args "$@"
 
+if [[ -z "$BETTERVIM_LICENSE" ]]; then
+  echo "Missing required option: --bettervim-license LICENSE"
+  usage
+  exit 1
+fi
+
 echo "Here we go again!"
 
 install_brew
@@ -500,6 +532,8 @@ install_java_kotlin
 
 echo "Installing CLIs"
 brew install node pnpm gh neovim watchman go ocaml opam dune docker docker-compose docker-buildx tursodatabase/tap/turso
+install_bettervim
+install_fonts
 
 echo "Installing global Bun packages"
 bun add -g @earendil-works/pi-coding-agent opencode-ai
@@ -508,7 +542,7 @@ configure_codex
 configure_pi
 
 echo "Installing apps"
-brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord
+brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
 configure_zed
 install_handy
 configure_atlas_extensions
