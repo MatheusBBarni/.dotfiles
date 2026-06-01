@@ -204,6 +204,14 @@ install_bun() {
   fi
 }
 
+install_herdr() {
+  echo "Installing herdr"
+
+  if ! command -v herdr >/dev/null 2>&1; then
+    curl -fsSL https://herdr.dev/install.sh | sh
+  fi
+}
+
 install_rust() {
   echo "Installing Rust"
 
@@ -486,6 +494,7 @@ install_base_packages
 install_oh_my_zsh
 install_nvm
 install_bun
+install_herdr
 install_rust
 install_java_kotlin
 
