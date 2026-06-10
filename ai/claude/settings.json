@@ -1,0 +1,8 @@
+{
+  "skipDangerousModePermissionPrompt": true,
+  "model": "claude-fable-5[1m]",
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.dotfiles/ai/claude/statusline-command.sh"
+  }
+}
