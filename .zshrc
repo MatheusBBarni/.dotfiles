@@ -1,4 +1,5 @@
 export ZSH="$HOME/.oh-my-zsh"
+export EDITOR="nvim"
 
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="candy"
@@ -149,6 +150,9 @@ fi
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+alias hr="herdr"
+alias yz="yazi"
+
 # Added by Antigravity
 export PATH="/Users/matheusbbarni/.antigravity/antigravity/bin:$PATH"
 
@@ -156,5 +160,7 @@ export PATH="/Users/matheusbbarni/.antigravity/antigravity/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
 export OPENCODE_API_KEY="sk-yt2Q8eUAZKAtGXK5dfcAsLI0qXhMSn9wRSml5GmHx8YMwLKJnKKrehUUuaVe2b3z"
-alias ccc="claude --dangerously-skip-permissions"
+export ZAI_API_KEY="2e1e10609ea545ac9f7e4e16016f36c3.cNqfWm1wqTKdwsXa"
+
+alias ccc="claude --dangerously-skip-permissions --effort max"
 alias cccl="claude --dangerously-skip-permissions --effort low"

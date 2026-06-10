@@ -401,7 +401,9 @@ configure_cmux() {
     link_file "$DOTFILES_DIR/cmux/settings.json" "$HOME/.config/cmux/settings.json"
   fi
 
-  if [[ -f "$DOTFILES_DIR/cmux/ghostty/config" ]]; then
+  if [[ -f "$DOTFILES_DIR/ghostty/config" ]]; then
+    link_file "$DOTFILES_DIR/ghostty/config" "$HOME/.config/ghostty/config"
+  elif [[ -f "$DOTFILES_DIR/cmux/ghostty/config" ]]; then
     link_file "$DOTFILES_DIR/cmux/ghostty/config" "$HOME/.config/ghostty/config"
   fi
 }
