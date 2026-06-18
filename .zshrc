@@ -159,10 +159,8 @@ export PATH="/Users/matheusbbarni/.antigravity/antigravity/bin:$PATH"
 # Added by Factory Desktop
 export PATH="$HOME/.local/bin:$PATH"
 
-export OPENCODE_API_KEY="sk-yt2Q8eUAZKAtGXK5dfcAsLI0qXhMSn9wRSml5GmHx8YMwLKJnKKrehUUuaVe2b3z"
-export ZAI_API_KEY="2e1e10609ea545ac9f7e4e16016f36c3.cNqfWm1wqTKdwsXa"
-
-alias ccc="claude --dangerously-skip-permissions --effort max"
+alias ccc="claude --dangerously-skip-permissions --effort xhigh"
 alias cch="claude --dangerously-skip-permissions --model haiku --effort medium"
 alias cccl="claude --dangerously-skip-permissions --effort low"
 alias ccz="claude --dangerously-skip-permissions --settings /Users/matheusbbarni/.claude-config-glm.json --effort max"
+alias vvv="verboo --dangerously-skip-permissions"
