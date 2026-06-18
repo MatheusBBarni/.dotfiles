@@ -191,6 +191,22 @@ install_oh_my_zsh() {
   link_file "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 }
 
+setup_zshrc_local() {
+  echo "Setting up .zshrc.local for local API keys"
+
+  local zshrc_local="$HOME/.zshrc.local"
+  if [[ ! -f "$zshrc_local" ]]; then
+    cat > "$zshrc_local" <<'EOF'
+# Local environment variables (not committed to git)
+# Add your API keys and local configs here
+
+export OPENCODE_API_KEY="sk-YOUR_KEY_HERE"
+export ZAI_API_KEY="YOUR_KEY_HERE"
+EOF
+    chmod 600 "$zshrc_local"
+  fi
+}
+
 install_nvm() {
   echo "Installing nvm"
 
@@ -528,6 +544,7 @@ echo "Here we go again!"
 install_brew
 install_base_packages
 install_oh_my_zsh
+setup_zshrc_local
 install_nvm
 install_bun
 install_herdr
