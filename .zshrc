@@ -164,3 +164,6 @@ alias cch="claude --dangerously-skip-permissions --model haiku --effort medium"
 alias cccl="claude --dangerously-skip-permissions --effort low"
 alias ccz="claude --dangerously-skip-permissions --settings /Users/matheusbbarni/.claude-config-glm.json --effort max"
 alias vvv="verboo --dangerously-skip-permissions"
+
+# Load local environment variables (not in git)
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
