@@ -267,6 +267,16 @@ install_fonts() {
   brew install --cask font-space-mono-nerd-font
 }
 
+install_claude() {
+  echo "Installing Claude Code"
+
+  if ! command -v claude >/dev/null 2>&1; then
+    curl -fsSL https://claude.ai/install.sh | bash
+  else
+    echo "Claude Code is already installed"
+  fi
+}
+
 install_bettervim() {
   echo "Installing bettervim"
 
@@ -531,6 +541,16 @@ configure_codex() {
   done
 }
 
+configure_claude_skills() {
+  echo "Configuring Claude Code skills"
+
+  mkdir -p "$HOME/.claude/skills"
+  for skill in "$DOTFILES_DIR"/ai/skills/*; do
+    [[ -d "$skill" ]] || continue
+    link_file "$skill" "$HOME/.claude/skills/$(basename "$skill")"
+  done
+}
+
 parse_args "$@"
 
 if [[ -z "$BETTERVIM_LICENSE" ]]; then
@@ -555,12 +575,14 @@ echo "Installing CLIs"
 brew install node pnpm gh neovim watchman go ocaml opam dune docker docker-compose docker-buildx tursodatabase/tap/turso
 install_bettervim
 install_fonts
+install_claude
 
 echo "Installing global Bun packages"
 bun add -g @earendil-works/pi-coding-agent opencode-ai
 brew install --cask codex
 configure_codex
 configure_pi
+configure_claude_skills
 
 echo "Installing apps"
 brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
