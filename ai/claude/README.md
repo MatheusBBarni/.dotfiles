@@ -4,6 +4,10 @@ This directory contains Claude Code configuration files for personalized develop
 
 ## Files
 
+- **CLAUDE.md** - Global instructions applied across all projects (general engineering
+  guidelines plus the humanizer directive). Symlinked to `~/.claude/CLAUDE.md` by
+  `macos-setup.sh` (`configure_claude`).
+
 - **statusline-command.sh** - Custom status line script that displays:
   - Folder name (green)
   - Git branch (cyan)

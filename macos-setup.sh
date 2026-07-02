@@ -541,8 +541,14 @@ configure_codex() {
   done
 }
 
-configure_claude_skills() {
-  echo "Configuring Claude Code skills"
+configure_claude() {
+  echo "Configuring Claude Code"
+
+  mkdir -p "$HOME/.claude"
+
+  if [[ -f "$DOTFILES_DIR/ai/claude/CLAUDE.md" ]]; then
+    link_file "$DOTFILES_DIR/ai/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+  fi
 
   mkdir -p "$HOME/.claude/skills"
   for skill in "$DOTFILES_DIR"/ai/skills/*; do
@@ -582,7 +588,7 @@ bun add -g @earendil-works/pi-coding-agent opencode-ai
 brew install --cask codex
 configure_codex
 configure_pi
-configure_claude_skills
+configure_claude
 
 echo "Installing apps"
 brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
