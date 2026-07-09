@@ -3,11 +3,9 @@ set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NODE_VERSION="24"
-ATLAS_BOOKMARKS_HTML=""
 BETTERVIM_LICENSE=""
 DOCK_APPS=(
-  "/Applications/ChatGPT Atlas.app"
-  "/Applications/cmux.app"
+  "/Applications/Helium.app"
   "/Applications/Zed.app"
   "/Applications/Codex.app"
   "/Applications/YouTube Music.app"
@@ -22,7 +20,6 @@ usage() {
 Usage: $0 [options]
 
 Options:
-  --atlas-bookmarks-html PATH  Local Brave/Chrome bookmarks HTML export to import into Atlas
   --bettervim-license LICENSE  License key for bettervim installation (required)
   -h, --help                   Show this help
 EOF
@@ -31,14 +28,6 @@ EOF
 parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      --atlas-bookmarks-html)
-        if [[ $# -lt 2 ]]; then
-          echo "--atlas-bookmarks-html requires a file path"
-          exit 1
-        fi
-        ATLAS_BOOKMARKS_HTML="$2"
-        shift 2
-        ;;
       --bettervim-license)
         if [[ $# -lt 2 ]]; then
           echo "--bettervim-license requires a license value"
@@ -360,77 +349,11 @@ install_xcode() {
   fi
 }
 
-configure_atlas_extensions() {
-  echo "Opening Atlas extension install pages"
-
-  local atlas_app="/Applications/ChatGPT Atlas.app"
-  if [[ ! -d "$atlas_app" ]]; then
-    echo "ChatGPT Atlas is not installed; skipping extension pages"
-    return
-  fi
-
-  local extension_urls=(
-    "https://chromewebstore.google.com/detail/bitwarden-password-manager/nngceckbapebfimnlniiiahkandclblb"
-    "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi"
-    "https://chromewebstore.google.com/detail/volume-master/jghecgabfgfdldnmbfkhmffcabddioke"
-    "https://chromewebstore.google.com/detail/cuponomia-cupom-e-cashbac/gidejehfgombmkfflghejpncblgfkagj"
-  )
-
-  for extension_url in "${extension_urls[@]}"; do
-    open -a "ChatGPT Atlas" "$extension_url"
-  done
-}
-
-configure_atlas_bookmarks() {
-  if [[ -z "$ATLAS_BOOKMARKS_HTML" ]]; then
-    return
-  fi
-
-  echo "Preparing Atlas bookmarks import"
-
-  local bookmarks_file
-  bookmarks_file="$(cd "$(dirname "$ATLAS_BOOKMARKS_HTML")" && pwd)/$(basename "$ATLAS_BOOKMARKS_HTML")"
-
-  if [[ ! -f "$bookmarks_file" ]]; then
-    echo "Bookmarks file not found: $bookmarks_file"
-    exit 1
-  fi
-
-  case "$bookmarks_file" in
-    "$DOTFILES_DIR"/*)
-      echo "Warning: bookmarks file is inside this repo. Keep it untracked."
-      ;;
-  esac
-
-  local atlas_app="/Applications/ChatGPT Atlas.app"
-  if [[ ! -d "$atlas_app" ]]; then
-    echo "ChatGPT Atlas is not installed; skipping bookmarks import"
-    return
-  fi
-
-  if command -v pbcopy >/dev/null 2>&1; then
-    printf "%s" "$bookmarks_file" | pbcopy
-  fi
-
-  open -a "ChatGPT Atlas" "chrome://bookmarks/"
-  open -R "$bookmarks_file"
-
-  echo "Atlas does not expose a reliable bookmarks import CLI."
-  echo "In Atlas, open Bookmarks Manager > menu > Import bookmarks, then select:"
-  echo "$bookmarks_file"
-}
-
-configure_cmux() {
-  echo "Configuring cmux"
-
-  if [[ -f "$DOTFILES_DIR/cmux/settings.json" ]]; then
-    link_file "$DOTFILES_DIR/cmux/settings.json" "$HOME/.config/cmux/settings.json"
-  fi
+configure_ghostty() {
+  echo "Configuring Ghostty"
 
   if [[ -f "$DOTFILES_DIR/ghostty/config" ]]; then
     link_file "$DOTFILES_DIR/ghostty/config" "$HOME/.config/ghostty/config"
-  elif [[ -f "$DOTFILES_DIR/cmux/ghostty/config" ]]; then
-    link_file "$DOTFILES_DIR/cmux/ghostty/config" "$HOME/.config/ghostty/config"
   fi
 }
 
@@ -591,13 +514,11 @@ configure_pi
 configure_claude
 
 echo "Installing apps"
-brew install --cask rectangle raycast bitwarden chatgpt-atlas codex-app cmux zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
+brew install --cask rectangle raycast bitwarden helium-browser codex-app zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
 configure_zed
 install_handy
-configure_atlas_extensions
-configure_atlas_bookmarks
 
-configure_cmux
+configure_ghostty
 configure_dock
 
 echo "Done"
