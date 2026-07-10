@@ -115,15 +115,15 @@ export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
 
 # Go
-export GOROOT="$HOME/.local/go"
 export GOPATH="$HOME/go"
-export PATH="$GOROOT/bin:$GOPATH/bin:$PATH"
+export PATH="$GOPATH/bin:$PATH"
 
 # Turso
 export PATH="$PATH:/home/adminai/.turso"
 
 # Codex
-alias coo='codex --dangerously-bypass-approvals-and-sandbox --model gpt-5.5'
+alias coo='codex --dangerously-bypass-approvals-and-sandbox --model gpt-5.6-terra --config model_reasoning_effort=\"ultra\"'
+alias cool='codex --dangerously-bypass-approvals-and-sandbox --model gpt-5.6-luna --config model_reasoning_effort=\"high\"'
 alias coosp='codex --dangerously-bypass-approvals-and-sandbox --model gpt-5.3-codex-spark --config model_reasoning_effort=\"xhigh\"'
 
 # Opencode (non-TUI message mode)
@@ -167,5 +167,3 @@ alias vvv="verboo --dangerously-skip-permissions"
 
 # Load local environment variables (not in git)
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
-
-
