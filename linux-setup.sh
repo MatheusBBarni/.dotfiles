@@ -344,6 +344,11 @@ install_claude() {
   fi
 }
 
+install_codex_app() {
+  echo "Codex desktop app is not available for Linux"
+  echo "The Codex CLI is installed instead via @openai/codex"
+}
+
 install_bettervim() {
   echo "Installing bettervim"
 
@@ -359,7 +364,6 @@ install_global_bun_packages() {
   echo "Installing global Bun packages"
 
   export PATH="$HOME/.bun/bin:$PATH"
-  # Codex ships as a macOS cask; on Linux the CLI is distributed via npm.
   bun add -g @earendil-works/pi-coding-agent opencode-ai @openai/codex
 }
 
@@ -579,8 +583,9 @@ Omarchy notes (differences from the macOS setup)
 - dockutil / Dock macOS only. No Linux equivalent.
 
 Verify before relying on them (may be macOS only):
-- codex-app (GUI) The Codex CLI is installed via npm; the desktop GUI may be
-                  macOS only.
+- codex-app (GUI) Not available for Linux yet; sign up for availability updates
+                  at https://openai.com/form/codex-app/. The Codex CLI is
+                  installed via npm.
 - pear-desktop    Availability unclear. Check https://pears.com for a Linux build.
 ------------------------------------------------------------
 EOF
@@ -615,6 +620,7 @@ install_docker
 
 install_bettervim
 install_claude
+install_codex_app
 
 install_global_bun_packages
 configure_codex

@@ -266,6 +266,16 @@ install_claude() {
   fi
 }
 
+install_codex_app() {
+  echo "Installing Codex desktop app"
+
+  if [[ ! -d "/Applications/Codex.app" ]]; then
+    brew install --cask codex-app
+  else
+    echo "Codex desktop app is already installed"
+  fi
+}
+
 install_bettervim() {
   echo "Installing bettervim"
 
@@ -505,6 +515,7 @@ brew install node pnpm gh neovim watchman go ocaml opam dune docker docker-compo
 install_bettervim
 install_fonts
 install_claude
+install_codex_app
 
 echo "Installing global Bun packages"
 bun add -g @earendil-works/pi-coding-agent opencode-ai
@@ -514,7 +525,7 @@ configure_pi
 configure_claude
 
 echo "Installing apps"
-brew install --cask rectangle raycast bitwarden helium-browser codex-app zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
+brew install --cask rectangle raycast bitwarden helium-browser zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
 configure_zed
 install_handy
 
