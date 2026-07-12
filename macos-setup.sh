@@ -462,6 +462,10 @@ configure_codex() {
     echo "Codex CLI not found; skipping Context7 MCP setup"
   fi
 
+  if [[ -f "$DOTFILES_DIR/ai/codex/install-tui-status-line.sh" ]]; then
+    bash "$DOTFILES_DIR/ai/codex/install-tui-status-line.sh"
+  fi
+
   mkdir -p "$HOME/.codex/agents"
   for agent in "$DOTFILES_DIR"/ai/agents/codex/*.toml; do
     link_file "$agent" "$HOME/.codex/agents/$(basename "$agent")"

@@ -9,7 +9,7 @@ Personal configuration files and setup scripts for a fully automated macOS and L
 - **Editor Configs** — Vim, Neovim (better-vim), VSCode, and Zed editor setups
 - **Terminal Configs** — zsh, Warp terminal, Ghostty, and tmux configurations
 - **CLI Tools** — CMux and Pi Subagents configurations
-- **AI Integration** — Claude Code and AI-related tooling
+- **AI Integration** — Codex CLI, Claude Code, and AI-related tooling
 
 ## Quick Start
 
@@ -39,7 +39,7 @@ Personal configuration files and setup scripts for a fully automated macOS and L
 
 | Directory | Purpose |
 |-----------|---------|
-| `ai/` | AI-related tools and Claude Code configurations |
+| `ai/` | AI-related tools plus Codex and Claude Code configurations |
 | `better-vim/` | Neovim + Lua configuration with plugins |
 | `cmux/` | CMux multiplexer configuration |
 | `ghostty/` | Ghostty terminal emulator themes and configs |
