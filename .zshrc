@@ -177,3 +177,6 @@ autoload -Uz compinit && compinit -C
 # <<< grok installer <<<
 
 alias ggg="grok --yolo"
+
+# Pi
+export PATH="/opt/homebrew/bin:$PATH"

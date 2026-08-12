@@ -377,9 +377,11 @@ configure_pi() {
 
   pi install npm:amp-themes
   pi install npm:pi-subagents
-  pi install npm:@matheusbbarni/pi-goal-extension
+  pi install npm:pi-mcp-adapter
+  pi install npm:@ff-labs/pi-fff
+  pi install npm:@narumitw/pi-goal
+  pi install npm:pi-zentui
   pi install npm:@matheusbbarni/pi-message-queue
-  pi install npm:@matheusbbarni/pi-stitch-mcp
 
   local settings_file="$HOME/.pi/agent/settings.json"
   mkdir -p "$HOME/.pi/agent"
@@ -387,9 +389,11 @@ configure_pi() {
   local -a required_packages=(
     "npm:amp-themes"
     "npm:pi-subagents"
-    "npm:@matheusbbarni/pi-goal-extension"
+    "npm:pi-mcp-adapter"
+    "npm:@ff-labs/pi-fff"
+    "npm:@narumitw/pi-goal"
+    "npm:pi-zentui"
     "npm:@matheusbbarni/pi-message-queue"
-    "npm:@matheusbbarni/pi-stitch-mcp"
   )
 
   if command -v python3 >/dev/null 2>&1; then
