@@ -443,6 +443,7 @@ configure_pi() {
   fi
 
   pi install npm:amp-themes
+  pi install npm:awesome-pi-themes
   pi install npm:pi-subagents
   pi install npm:pi-mcp-adapter
   pi install npm:@ff-labs/pi-fff
@@ -455,6 +456,7 @@ configure_pi() {
 
   local -a required_packages=(
     "npm:amp-themes"
+    "npm:awesome-pi-themes"
     "npm:pi-subagents"
     "npm:pi-mcp-adapter"
     "npm:@ff-labs/pi-fff"
