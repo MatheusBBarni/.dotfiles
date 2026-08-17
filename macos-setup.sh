@@ -396,6 +396,7 @@ configure_pi() {
   pi install npm:@narumitw/pi-goal
   pi install npm:pi-zentui
   pi install npm:@matheusbbarni/pi-message-queue
+  pi install npm:@juicesharp/rpiv-ask-user-question
 
   local settings_file="$HOME/.pi/agent/settings.json"
   mkdir -p "$HOME/.pi/agent"
@@ -409,6 +410,7 @@ configure_pi() {
     "npm:@narumitw/pi-goal"
     "npm:pi-zentui"
     "npm:@matheusbbarni/pi-message-queue"
+    "npm:@juicesharp/rpiv-ask-user-question"
   )
 
   if command -v python3 >/dev/null 2>&1; then
