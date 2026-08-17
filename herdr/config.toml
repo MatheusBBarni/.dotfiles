@@ -1,0 +1,43 @@
+onboarding = false
+
+[keys]
+# Open an existing Git worktree from the selected space.
+open_worktree = "prefix+shift+o"
+# prefix+shift+j/k move the current space; unbind the default pane swaps.
+swap_pane_down = ""
+swap_pane_up = ""
+
+[[keys.command]]
+key = "prefix+shift+j"
+type = "shell"
+command = "\"$HOME/.config/herdr/move-space.py\" down"
+description = "move space down"
+
+[[keys.command]]
+key = "prefix+shift+k"
+type = "shell"
+command = "\"$HOME/.config/herdr/move-space.py\" up"
+description = "move space up"
+
+[[keys.command]]
+key = "cmd+r"
+type = "plugin_action"
+command = "persiyanov.reviewr.toggle"   # <plugin_id>.<action_id> — note the id, not the name
+
+[ui.toast]
+delivery = "system"
+
+[ui]
+show_agent_labels_on_pane_borders = true
+
+agent_panel_sort = "priority"
+
+[experimental]
+allow_nested = true
+pane_history = false
+
+[theme]
+name = "catppuccin"
+
+[ui.sound]
+enabled = true

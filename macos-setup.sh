@@ -367,6 +367,19 @@ configure_ghostty() {
   fi
 }
 
+configure_herdr() {
+  echo "Configuring herdr"
+
+  if [[ -f "$DOTFILES_DIR/herdr/config.toml" ]]; then
+    link_file "$DOTFILES_DIR/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+  fi
+
+  if [[ -f "$DOTFILES_DIR/herdr/move-space.py" ]]; then
+    link_file "$DOTFILES_DIR/herdr/move-space.py" "$HOME/.config/herdr/move-space.py"
+    chmod +x "$DOTFILES_DIR/herdr/move-space.py"
+  fi
+}
+
 configure_pi() {
   echo "Configuring Pi"
 
@@ -540,6 +553,7 @@ configure_zed
 install_handy
 
 configure_ghostty
+configure_herdr
 configure_dock
 
 echo "Done"

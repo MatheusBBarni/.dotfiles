@@ -576,6 +576,19 @@ configure_ghostty() {
   fi
 }
 
+configure_herdr() {
+  echo "Configuring herdr"
+
+  if [[ -f "$DOTFILES_DIR/herdr/config.toml" ]]; then
+    link_file "$DOTFILES_DIR/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+  fi
+
+  if [[ -f "$DOTFILES_DIR/herdr/move-space.py" ]]; then
+    link_file "$DOTFILES_DIR/herdr/move-space.py" "$HOME/.config/herdr/move-space.py"
+    chmod +x "$DOTFILES_DIR/herdr/move-space.py"
+  fi
+}
+
 print_notes() {
   cat <<'EOF'
 
@@ -646,6 +659,7 @@ install_tailscale
 
 configure_zed
 configure_ghostty
+configure_herdr
 
 print_notes
 
