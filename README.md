@@ -11,42 +11,78 @@ Personal configuration files and setup scripts for macOS, Linux, and Omarchy.
 - **Terminal Configs** - zsh, Warp, Ghostty, and tmux
 - **AI Integration** - Pi extensions, Codex/Claude configs, and shared skills
 
-## Quick Start
+## How to use
 
-### macOS Setup
+`bootstrap.sh` picks the setup script from a target name.
+On a new machine it clones this repo to `~/.dotfiles` (or reuses that clone), then runs the matching setup.
+If you already have the repo checked out, it uses that copy instead.
+
+### One-liner
+
+Args after `bash -s --` are required so the target reaches the script.
 
 ```bash
-./macos-setup.sh [options]
+curl -fsSL https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/bootstrap.sh \
+  | bash -s -- omarchy --bettervim-license YOUR_LICENSE_KEY
 ```
 
-**Options:**
-- `--bettervim-license LICENSE` - License key for bettervim installation
-- `-h, --help` - Show help
+### From a clone
 
-**Example:**
 ```bash
-./macos-setup.sh --bettervim-license YOUR_LICENSE_KEY
+git clone https://github.com/MatheusBBarni/.dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+./bootstrap.sh omarchy --bettervim-license YOUR_LICENSE_KEY
 ```
 
-### Omarchy Setup
-
-Omarchy already installs Pi, Claude, Codex, OpenCode, herdr, docker, nvim, and the usual CLI tools via mise / `omarchy-base.packages`.
-This script only adds the gaps (zsh, bun, rust, android, bettervim, Pi extensions, personal configs) and applies Omarchy's built-in Catppuccin dark theme.
+Or call a setup script directly:
 
 ```bash
 ./omarchy-setup.sh --bettervim-license YOUR_LICENSE_KEY
+./macos-setup.sh --bettervim-license YOUR_LICENSE_KEY
+./linux-setup.sh --bettervim-license YOUR_LICENSE_KEY
 ```
 
-### Linux Setup (non-Omarchy)
+### Targets
+
+| Target | Script | Use when |
+|--------|--------|----------|
+| `mac`, `macos` | `macos-setup.sh` | macOS |
+| `linux` | `linux-setup.sh` | Arch/Linux that is not Omarchy |
+| `omarchy` | `omarchy-setup.sh` | Omarchy. Skips agents and packages the distro already ships |
+
+### Bootstrap flags
+
+| Flag | What it does |
+|------|----------------|
+| `--ssh` | Clone with `git@github.com` instead of HTTPS |
+| `--dir PATH` | Clone or reuse this directory instead of `~/.dotfiles` |
+| `-h`, `--help` | Show help |
+
+Anything after the target is passed through to the setup script.
+
+### Setup flags
+
+| Flag | What it does |
+|------|----------------|
+| `--bettervim-license LICENSE` | Required the first time bettervim is installed. Safe to omit on re-runs if it is already there |
+| `-h`, `--help` | Show help |
+
+### Re-runs
+
+Setup scripts skip tools, fonts, themes, and Pi packages that are already installed.
+If a step fails, run the same command again.
+
+When it finishes, reload the shell:
 
 ```bash
-./linux-setup.sh --bettervim-license YOUR_LICENSE_KEY
+exec zsh
 ```
 
 ## Directory Structure
 
 | Path | Purpose |
 |------|---------|
+| `bootstrap.sh` | Curl-friendly launcher: `mac`, `linux`, or `omarchy` |
 | `omarchy-setup.sh` | Omarchy overlay (does not reinstall shipped agents) |
 | `macos-setup.sh` | macOS bootstrap |
 | `linux-setup.sh` | Generic Arch/Linux bootstrap |
@@ -100,31 +136,6 @@ The setup script configures these apps on the dock:
 ### Themes
 - **Ghostty:** Eldritch theme with custom icons
 
-## Installation
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/MatheusBBarni/.dotfiles.git
-   cd .dotfiles
-   ```
-
-2. Run the appropriate setup script:
-   ```bash
-   # macOS
-   ./macos-setup.sh --bettervim-license YOUR_LICENSE
-
-   # Omarchy
-   ./omarchy-setup.sh --bettervim-license YOUR_LICENSE
-
-   # Other Linux
-   ./linux-setup.sh --bettervim-license YOUR_LICENSE
-   ```
-
-3. Restart your terminal or reload your shell:
-   ```bash
-   exec zsh  # or your preferred shell
-   ```
-
 ## Customization
 
 - **Shell:** Edit `.zshrc` for custom aliases, functions, and environment variables
@@ -140,4 +151,4 @@ The setup script configures these apps on the dock:
 
 ## License
 
-Personal configuration — use as reference for your own dotfiles.
+Personal configuration. Use as reference for your own dotfiles.
