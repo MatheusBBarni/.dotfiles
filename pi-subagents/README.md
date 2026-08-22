@@ -1,6 +1,7 @@
 # pi-subagents config
 
-This repo installs the `pi-subagents` Pi extension during macOS setup:
+This repo installs the `pi-subagents` Pi extension from `setup-lib.sh`
+(`configure_pi`) on macOS, Linux, and Omarchy:
 
 ```sh
 pi install npm:pi-subagents

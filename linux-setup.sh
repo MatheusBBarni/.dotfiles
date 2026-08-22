@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Linux counterpart of macos-setup.sh, targeting Omarchy (an Arch Linux based
-# distro). Uses pacman for official packages and yay for the AUR (Omarchy ships
-# yay). Mirrors the macOS script: helpers, modular install_/configure_
-# functions, and an ordered invocation section at the bottom.
+# Generic Arch/Linux counterpart of macos-setup.sh.
+# On Omarchy, prefer omarchy-setup.sh - that script skips packages and agents
+# the distro already ships (pi, claude, codex, opencode, herdr, docker, ...).
 #
-# Omarchy already provides a tiling window manager (so no Rectangle) and an app
-# launcher (so no Raycast). Apps with no Linux build are noted in print_notes.
+# Uses pacman for official packages and yay for the AUR.
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=setup-lib.sh
+source "$DOTFILES_DIR/setup-lib.sh"
+
 NODE_VERSION="24"
 BETTERVIM_LICENSE=""
 
@@ -55,27 +56,6 @@ parse_args() {
         ;;
     esac
   done
-}
-
-backup_path() {
-  local path="$1"
-  if [[ -e "$path" || -L "$path" ]]; then
-    mv "$path" "${path}.backup.$(date +%Y%m%d%H%M%S)"
-  fi
-}
-
-link_file() {
-  local source="$1"
-  local target="$2"
-
-  mkdir -p "$(dirname "$target")"
-
-  if [[ -L "$target" && "$(readlink "$target")" == "$source" ]]; then
-    return
-  fi
-
-  backup_path "$target"
-  ln -s "$source" "$target"
 }
 
 # Return the first release asset download URL matching a regex.
@@ -205,22 +185,6 @@ install_oh_my_zsh() {
   link_file "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 }
 
-setup_zshrc_local() {
-  echo "Setting up .zshrc.local for local API keys"
-
-  local zshrc_local="$HOME/.zshrc.local"
-  if [[ ! -f "$zshrc_local" ]]; then
-    cat > "$zshrc_local" <<'EOF'
-# Local environment variables (not committed to git)
-# Add your API keys and local configs here
-
-export OPENCODE_API_KEY="sk-YOUR_KEY_HERE"
-export ZAI_API_KEY="YOUR_KEY_HERE"
-EOF
-    chmod 600 "$zshrc_local"
-  fi
-}
-
 install_nvm() {
   echo "Installing nvm"
 
@@ -334,21 +298,6 @@ install_docker() {
   echo "Added $USER to the docker group. Log out and back in for it to take effect."
 }
 
-install_claude() {
-  echo "Installing Claude Code"
-
-  if ! command -v claude >/dev/null 2>&1; then
-    curl -fsSL https://claude.ai/install.sh | bash
-  else
-    echo "Claude Code is already installed"
-  fi
-}
-
-install_codex_app() {
-  echo "Codex desktop app is not available for Linux"
-  echo "The Codex CLI is installed instead via @openai/codex"
-}
-
 install_bettervim() {
   echo "Installing bettervim"
 
@@ -364,7 +313,7 @@ install_global_bun_packages() {
   echo "Installing global Bun packages"
 
   export PATH="$HOME/.bun/bin:$PATH"
-  bun add -g @earendil-works/pi-coding-agent opencode-ai @openai/codex
+  bun add -g @earendil-works/pi-coding-agent opencode-ai
 }
 
 install_desktop_apps() {
@@ -407,211 +356,20 @@ install_tailscale() {
     echo "Could not enable tailscaled.service; enable it manually with: sudo systemctl enable --now tailscaled"
 }
 
-configure_codex() {
-  echo "Configuring Codex"
-
-  if command -v codex >/dev/null 2>&1; then
-    if ! codex mcp list 2>/dev/null | awk '{print $1}' | grep -qx "context7"; then
-      codex mcp add context7 -- npx -y @upstash/context7-mcp
-    fi
-  else
-    echo "Codex CLI not found; skipping Context7 MCP setup"
-  fi
-
-  if [[ -f "$DOTFILES_DIR/ai/codex/install-tui-status-line.sh" ]]; then
-    bash "$DOTFILES_DIR/ai/codex/install-tui-status-line.sh"
-  fi
-
-  mkdir -p "$HOME/.codex/agents"
-  for agent in "$DOTFILES_DIR"/ai/agents/codex/*.toml; do
-    link_file "$agent" "$HOME/.codex/agents/$(basename "$agent")"
-  done
-
-  mkdir -p "$HOME/.codex/skills"
-  for skill in "$DOTFILES_DIR"/ai/skills/*; do
-    [[ -d "$skill" ]] || continue
-    link_file "$skill" "$HOME/.codex/skills/$(basename "$skill")"
-  done
-}
-
-configure_pi() {
-  echo "Configuring Pi"
-
-  if ! command -v pi >/dev/null 2>&1; then
-    echo "Pi CLI not found; skipping Pi extension setup"
-    return
-  fi
-
-  pi install npm:amp-themes
-  pi install npm:awesome-pi-themes
-  pi install npm:pi-subagents
-  pi install npm:pi-mcp-adapter
-  pi install npm:@ff-labs/pi-fff
-  pi install npm:@narumitw/pi-goal
-  pi install npm:pi-zentui
-  pi install npm:@matheusbbarni/pi-message-queue
-  pi install npm:@juicesharp/rpiv-ask-user-question
-
-  local settings_file="$HOME/.pi/agent/settings.json"
-  mkdir -p "$HOME/.pi/agent"
-
-  local -a required_packages=(
-    "npm:amp-themes"
-    "npm:awesome-pi-themes"
-    "npm:pi-subagents"
-    "npm:pi-mcp-adapter"
-    "npm:@ff-labs/pi-fff"
-    "npm:@narumitw/pi-goal"
-    "npm:pi-zentui"
-    "npm:@matheusbbarni/pi-message-queue"
-    "npm:@juicesharp/rpiv-ask-user-question"
-  )
-
-  if command -v python3 >/dev/null 2>&1; then
-    python3 - "$settings_file" "${required_packages[@]}" <<'PY'
-import json
-import os
-import sys
-
-settings_path = sys.argv[1]
-required_packages = sys.argv[2:]
-theme = "amp-dark"
-
-current = {}
-if os.path.exists(settings_path):
-    try:
-        with open(settings_path, "r", encoding="utf-8") as f:
-            content = f.read().strip()
-            if content:
-                current = json.loads(content)
-    except Exception:
-        current = {}
-
-packages = current.get("packages", [])
-if not isinstance(packages, list):
-    packages = []
-
-for package in required_packages:
-    if package not in packages:
-        packages.append(package)
-
-current["packages"] = packages
-current["theme"] = theme
-
-os.makedirs(os.path.dirname(settings_path), exist_ok=True)
-with open(settings_path, "w", encoding="utf-8") as f:
-    json.dump(current, f, indent=2)
-    f.write("\n")
-PY
-  else
-    echo "python3 not found; skipping Pi settings.json update"
-  fi
-
-  mkdir -p "$HOME/.pi/agent/agents"
-  for agent in "$DOTFILES_DIR"/ai/agents/pi/*.md; do
-    [[ -f "$agent" ]] || continue
-    link_file "$agent" "$HOME/.pi/agent/agents/$(basename "$agent")"
-  done
-
-  mkdir -p "$HOME/.pi/agent/extensions"
-  for extension in "$DOTFILES_DIR"/ai/extensions/pi/*.{ts,js}; do
-    [[ -f "$extension" ]] || continue
-    link_file "$extension" "$HOME/.pi/agent/extensions/$(basename "$extension")"
-  done
-
-  mkdir -p "$HOME/.pi/agent/skills"
-  for skill in "$DOTFILES_DIR"/ai/skills/*; do
-    [[ -d "$skill" ]] || continue
-    link_file "$skill" "$HOME/.pi/agent/skills/$(basename "$skill")"
-  done
-}
-
-configure_claude() {
-  echo "Configuring Claude Code"
-
-  mkdir -p "$HOME/.claude"
-
-  if [[ -f "$DOTFILES_DIR/ai/claude/CLAUDE.md" ]]; then
-    link_file "$DOTFILES_DIR/ai/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
-  fi
-
-  mkdir -p "$HOME/.claude/skills"
-  for skill in "$DOTFILES_DIR"/ai/skills/*; do
-    [[ -d "$skill" ]] || continue
-    link_file "$skill" "$HOME/.claude/skills/$(basename "$skill")"
-  done
-}
-
-configure_zed() {
-  echo "Configuring Zed"
-
-  local zed_config_dir="$HOME/.config/zed"
-  local config_files=(settings.json keymap.json tasks.json debug.json)
-  local config_dirs=(snippets themes)
-  local item
-
-  mkdir -p "$zed_config_dir"
-
-  for item in "${config_files[@]}"; do
-    if [[ -f "$DOTFILES_DIR/zed/$item" ]]; then
-      link_file "$DOTFILES_DIR/zed/$item" "$zed_config_dir/$item"
-    fi
-  done
-
-  for item in "${config_dirs[@]}"; do
-    if [[ -d "$DOTFILES_DIR/zed/$item" ]]; then
-      link_file "$DOTFILES_DIR/zed/$item" "$zed_config_dir/$item"
-    fi
-  done
-
-  if [[ -f "$DOTFILES_DIR/zed/auto-install-extensions.json" ]]; then
-    echo "Zed extensions are exported in zed/auto-install-extensions.json"
-    echo "Merge them into zed/settings.json under auto_install_extensions."
-  fi
-}
-
-configure_ghostty() {
-  echo "Configuring Ghostty"
-
-  if [[ -f "$DOTFILES_DIR/ghostty/config" ]]; then
-    link_file "$DOTFILES_DIR/ghostty/config" "$HOME/.config/ghostty/config"
-  fi
-}
-
-configure_herdr() {
-  echo "Configuring herdr"
-
-  if [[ -f "$DOTFILES_DIR/herdr/config.toml" ]]; then
-    link_file "$DOTFILES_DIR/herdr/config.toml" "$HOME/.config/herdr/config.toml"
-  fi
-
-  if [[ -f "$DOTFILES_DIR/herdr/move-space.py" ]]; then
-    link_file "$DOTFILES_DIR/herdr/move-space.py" "$HOME/.config/herdr/move-space.py"
-    chmod +x "$DOTFILES_DIR/herdr/move-space.py"
-  fi
-}
-
 print_notes() {
   cat <<'EOF'
 
 ------------------------------------------------------------
-Omarchy notes (differences from the macOS setup)
+Linux notes
 ------------------------------------------------------------
-- Rectangle       Not installed. Omarchy ships a tiling window manager.
-- Raycast         Not installed, per request. Use Omarchy's launcher.
-- ChatGPT Atlas   Replaced by Helium (installed as an AppImage under
-                  ~/Applications; the AUR package helium-browser-bin is an
-                  alternative if you prefer pacman/yay management).
-- cmux            Removed, per request. The Ghostty config is still linked.
-- Handy           Installed from the AUR (handy-bin).
-- Xcode / mas     macOS only. No Linux equivalent.
-- dockutil / Dock macOS only. No Linux equivalent.
+On Omarchy, use omarchy-setup.sh instead of this script.
+It skips agents and packages the distro already ships.
 
-Verify before relying on them (may be macOS only):
-- codex-app (GUI) Not available for Linux yet; sign up for availability updates
-                  at https://openai.com/form/codex-app/. The Codex CLI is
-                  installed via npm.
-- pear-desktop    Availability unclear. Check https://pears.com for a Linux build.
+- Rectangle / Raycast / Dock   macOS only
+- ChatGPT Atlas                Helium AppImage under ~/Applications
+- Handy                        AUR handy-bin
+- Claude / Codex desktop       not installed
+- pear-desktop                 check https://pears.com for a Linux build
 ------------------------------------------------------------
 EOF
 }
@@ -644,12 +402,10 @@ setup_opam
 install_docker
 
 install_bettervim
-install_claude
-install_codex_app
 
 install_global_bun_packages
 configure_codex
-configure_pi
+configure_pi amp-dark
 configure_claude
 
 echo "Installing apps"

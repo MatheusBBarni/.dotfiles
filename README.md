@@ -1,15 +1,15 @@
 # 🎯 Dotfiles
 
-Personal configuration files and setup scripts for a fully automated macOS and Linux development environment.
+Personal configuration files and setup scripts for macOS, Linux, and Omarchy.
 
 ## Features
 
-- **macOS Bootstrap** (`macos-setup.sh`) — Complete system setup with apps, developer tools, and configurations
-- **Linux Bootstrap** (`linux-setup.sh`) — Essential packages and configurations for Linux systems
-- **Editor Configs** — Vim, Neovim (better-vim), VSCode, and Zed editor setups
-- **Terminal Configs** — zsh, Warp terminal, Ghostty, and tmux configurations
-- **CLI Tools** — CMux and Pi Subagents configurations
-- **AI Integration** — Codex CLI, Claude Code, and AI-related tooling
+- **macOS Bootstrap** (`macos-setup.sh`) - apps, developer tools, and configs
+- **Omarchy Bootstrap** (`omarchy-setup.sh`) - personal overlay only; skips agents and packages Omarchy already ships
+- **Linux Bootstrap** (`linux-setup.sh`) - full Arch/Linux setup for non-Omarchy boxes
+- **Editor Configs** - Vim, Neovim (better-vim), VSCode, and Zed
+- **Terminal Configs** - zsh, Warp, Ghostty, and tmux
+- **AI Integration** - Pi extensions, Codex/Claude configs, and shared skills
 
 ## Quick Start
 
@@ -20,26 +20,38 @@ Personal configuration files and setup scripts for a fully automated macOS and L
 ```
 
 **Options:**
-- `--atlas-bookmarks-html PATH` — Import bookmarks into Atlas (Brave/Chrome export)
-- `--bettervim-license LICENSE` — License key for bettervim installation
-- `-h, --help` — Show help
+- `--bettervim-license LICENSE` - License key for bettervim installation
+- `-h, --help` - Show help
 
 **Example:**
 ```bash
 ./macos-setup.sh --bettervim-license YOUR_LICENSE_KEY
 ```
 
-### Linux Setup
+### Omarchy Setup
+
+Omarchy already installs Pi, Claude, Codex, OpenCode, herdr, docker, nvim, and the usual CLI tools via mise / `omarchy-base.packages`.
+This script only adds the gaps (zsh, bun, rust, android, bettervim, Pi extensions, personal configs) and applies Omarchy's built-in Catppuccin dark theme.
 
 ```bash
-./linux-setup.sh
+./omarchy-setup.sh --bettervim-license YOUR_LICENSE_KEY
+```
+
+### Linux Setup (non-Omarchy)
+
+```bash
+./linux-setup.sh --bettervim-license YOUR_LICENSE_KEY
 ```
 
 ## Directory Structure
 
-| Directory | Purpose |
-|-----------|---------|
-| `ai/` | AI-related tools plus Codex and Claude Code configurations |
+| Path | Purpose |
+|------|---------|
+| `omarchy-setup.sh` | Omarchy overlay (does not reinstall shipped agents) |
+| `macos-setup.sh` | macOS bootstrap |
+| `linux-setup.sh` | Generic Arch/Linux bootstrap |
+| `setup-lib.sh` | Shared helpers, including the Pi extension install list |
+| `ai/` | Codex, Claude, Pi agents/skills, and local Pi extensions |
 | `better-vim/` | Neovim + Lua configuration with plugins |
 | `cmux/` | CMux multiplexer configuration |
 | `ghostty/` | Ghostty terminal emulator themes and configs |
@@ -77,10 +89,8 @@ Personal configuration files and setup scripts for a fully automated macOS and L
 
 ### Dock Apps (macOS)
 The setup script configures these apps on the dock:
-- ChatGPT Atlas
-- cmux
+- Helium
 - Zed
-- Codex
 - YouTube Music
 - Tailscale
 - Docker
@@ -101,12 +111,13 @@ The setup script configures these apps on the dock:
 2. Run the appropriate setup script:
    ```bash
    # macOS
-   chmod +x macos-setup.sh
    ./macos-setup.sh --bettervim-license YOUR_LICENSE
-   
-   # Linux
-   chmod +x linux-setup.sh
-   ./linux-setup.sh
+
+   # Omarchy
+   ./omarchy-setup.sh --bettervim-license YOUR_LICENSE
+
+   # Other Linux
+   ./linux-setup.sh --bettervim-license YOUR_LICENSE
    ```
 
 3. Restart your terminal or reload your shell:
