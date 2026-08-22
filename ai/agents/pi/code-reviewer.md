@@ -1,7 +1,7 @@
 ---
 name: CodeReviewer
 description: Tech Lead with over 15 years of experience specializing in React, TypeScript, JavaScript, OCaml, ReScript, and Rust
-model: openai-codex/gpt-5.5
+model: xai/grok-4.6
 thinking: high
 systemPromptMode: replace
 inheritProjectContext: true

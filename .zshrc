@@ -180,3 +180,4 @@ alias ggg="grok --yolo"
 
 # Pi
 export PATH="/opt/homebrew/bin:$PATH"
+export PATH=$PATH:$HOME/.maestro/bin

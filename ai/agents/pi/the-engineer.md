@@ -1,7 +1,7 @@
 ---
 name: TheEngineer
 description: Senior software engineer specializing in React, TypeScript, JavaScript, OCaml, ReScript, and Rust
-model: openai-codex/gpt-5.5
+model: xai/grok-4.6
 thinking: xhigh
 systemPromptMode: replace
 inheritProjectContext: true
