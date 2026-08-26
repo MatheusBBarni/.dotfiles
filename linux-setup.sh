@@ -261,6 +261,20 @@ install_turso() {
   fi
 }
 
+install_cliamp() {
+  echo "Installing cliamp"
+
+  if ! command -v cliamp >/dev/null 2>&1; then
+    aur cliamp
+  fi
+
+  pac yt-dlp
+
+  if pacman -Q pipewire >/dev/null 2>&1; then
+    pac pipewire-alsa
+  fi
+}
+
 install_watchman() {
   echo "Installing watchman"
   if ! command -v watchman >/dev/null 2>&1; then
@@ -368,6 +382,7 @@ It skips agents and packages the distro already ships.
 - Rectangle / Raycast / Dock   macOS only
 - ChatGPT Atlas                Helium AppImage under ~/Applications
 - Handy                        AUR handy-bin
+- cliamp                       AUR; YouTube Music uses yt-dlp + browser cookies
 - Claude / Codex desktop       not installed
 - pear-desktop                 check https://pears.com for a Linux build
 ------------------------------------------------------------
@@ -397,6 +412,7 @@ install_java_kotlin
 echo "Installing CLIs"
 install_pnpm
 install_turso
+install_cliamp
 install_watchman
 setup_opam
 install_docker
@@ -418,6 +434,7 @@ install_tailscale
 configure_zed
 configure_ghostty
 configure_herdr
+configure_cliamp
 
 print_notes
 

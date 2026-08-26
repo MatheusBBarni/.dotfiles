@@ -193,6 +193,11 @@ install_fonts() {
   brew install --cask font-space-mono-nerd-font
 }
 
+install_cliamp() {
+  echo "Installing cliamp"
+  brew install bjarneo/cliamp/cliamp yt-dlp
+}
+
 install_bettervim() {
   echo "Installing bettervim"
 
@@ -298,6 +303,7 @@ install_java_kotlin
 
 echo "Installing CLIs"
 brew install node pnpm gh neovim watchman go ocaml opam dune docker docker-compose docker-buildx tursodatabase/tap/turso
+install_cliamp
 install_bettervim
 install_fonts
 
@@ -314,6 +320,7 @@ install_handy
 
 configure_ghostty
 configure_herdr
+configure_cliamp
 configure_dock
 
 echo "Done"

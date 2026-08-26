@@ -1,0 +1,9 @@
+# CLIAMP configuration
+# Setup copies this file and writes cookies_from for YouTube Music.
+
+provider = "ytmusic"
+
+# YouTube Music via the signed-in browser session (no Google Cloud OAuth).
+# configure_cliamp sets cookies_from from the browser on this machine.
+[ytmusic]
+expand_playlist = true

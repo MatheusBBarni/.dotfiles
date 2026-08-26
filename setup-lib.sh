@@ -320,3 +320,145 @@ configure_herdr() {
     chmod +x "$DOTFILES_DIR/herdr/move-space.py"
   fi
 }
+
+# Browser session yt-dlp should reuse for YouTube Music.
+cliamp_cookies_from() {
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    if [[ -d "$HOME/Library/Application Support/net.imput.helium" ]]; then
+      printf '%s\n' "chrome:~/Library/Application Support/net.imput.helium"
+      return
+    fi
+    if [[ -d "$HOME/Library/Application Support/Google/Chrome" ]]; then
+      printf '%s\n' "chrome"
+      return
+    fi
+    if [[ -d "$HOME/Library/Application Support/BraveSoftware/Brave-Browser" ]]; then
+      printf '%s\n' "brave"
+      return
+    fi
+    printf '%s\n' "safari"
+    return
+  fi
+
+  local keyring=""
+  if [[ -n "${WAYLAND_DISPLAY:-}" || -d /usr/share/omarchy ]]; then
+    keyring="+gnomekeyring"
+  fi
+
+  if [[ -d "$HOME/.config/chromium" ]]; then
+    printf '%s\n' "chromium${keyring}"
+    return
+  fi
+  if [[ -d "$HOME/.config/google-chrome" ]]; then
+    printf '%s\n' "chrome${keyring}"
+    return
+  fi
+  if [[ -d "$HOME/.config/BraveSoftware/Brave-Browser" ]]; then
+    printf '%s\n' "brave${keyring}"
+    return
+  fi
+  if [[ -d "$HOME/.mozilla/firefox" ]]; then
+    printf '%s\n' "firefox"
+    return
+  fi
+
+  printf '%s\n' "chrome"
+}
+
+# Copy the tracked cliamp config if needed, then fill in YouTube Music cookies.
+configure_cliamp() {
+  echo "Configuring cliamp (YouTube Music)"
+
+  local config_dir="$HOME/.config/cliamp"
+  local config_file="$config_dir/config.toml"
+  local template="$DOTFILES_DIR/cliamp/config.toml"
+  local cookies
+
+  mkdir -p "$config_dir"
+
+  if [[ ! -f "$config_file" && -f "$template" ]]; then
+    cp "$template" "$config_file"
+  elif [[ ! -f "$config_file" ]]; then
+    cat > "$config_file" <<'EOF'
+provider = "ytmusic"
+
+[ytmusic]
+expand_playlist = true
+EOF
+  fi
+
+  cookies="$(cliamp_cookies_from)"
+
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "$config_file" "$cookies" <<'PY'
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+cookies = sys.argv[2]
+text = path.read_text(encoding="utf-8") if path.exists() else ""
+if text and not text.endswith("\n"):
+    text += "\n"
+
+lines = text.splitlines(keepends=True)
+
+def is_active_assignment(line, key):
+    stripped = line.strip()
+    return (
+        not stripped.startswith("#")
+        and stripped.startswith(key)
+        and "=" in stripped
+    )
+
+has_provider = any(is_active_assignment(line, "provider") for line in lines)
+
+section_start = None
+for i, line in enumerate(lines):
+    if line.strip() == "[ytmusic]":
+        section_start = i
+        break
+
+def section_end(start):
+    for j in range(start + 1, len(lines)):
+        stripped = lines[j].strip()
+        if stripped.startswith("[") and stripped.endswith("]"):
+            return j
+    return len(lines)
+
+if not has_provider:
+    lines.insert(0, 'provider = "ytmusic"\n')
+    if section_start is not None:
+        section_start += 1
+
+if section_start is None:
+    if lines and lines[-1].strip() != "":
+        lines.append("\n")
+    lines.extend(
+        [
+            "[ytmusic]\n",
+            f'cookies_from = "{cookies}"\n',
+            "expand_playlist = true\n",
+        ]
+    )
+else:
+    end = section_end(section_start)
+    body = lines[section_start + 1 : end]
+    if not any(is_active_assignment(line, "cookies_from") for line in body):
+        lines.insert(section_start + 1, f'cookies_from = "{cookies}"\n')
+
+path.write_text("".join(lines), encoding="utf-8")
+print(f"YouTube Music cookies_from={cookies}")
+PY
+  elif ! grep -q '^[[:space:]]*cookies_from[[:space:]]*=' "$config_file"; then
+    if ! grep -q '^\[ytmusic\]' "$config_file"; then
+      printf '\n[ytmusic]\ncookies_from = "%s"\n' "$cookies" >> "$config_file"
+    else
+      printf 'cookies_from = "%s"\n' "$cookies" >> "$config_file"
+    fi
+    echo "YouTube Music cookies_from=$cookies"
+  fi
+
+  if ! have_cmd yt-dlp; then
+    echo "yt-dlp is not on PATH. YouTube Music playback needs it."
+  fi
+}

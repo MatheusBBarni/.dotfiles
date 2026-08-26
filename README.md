@@ -10,6 +10,7 @@ Personal configuration files and setup scripts for macOS, Linux, and Omarchy.
 - **Editor Configs** - Vim, Neovim (better-vim), VSCode, and Zed
 - **Terminal Configs** - zsh, Warp, Ghostty, and tmux
 - **AI Integration** - Pi extensions, Codex/Claude configs, and shared skills
+- **cliamp** - terminal music player; setup enables YouTube Music via browser cookies
 
 ## How to use
 
@@ -87,6 +88,7 @@ exec zsh
 | `macos-setup.sh` | macOS bootstrap |
 | `linux-setup.sh` | Generic Arch/Linux bootstrap |
 | `setup-lib.sh` | Shared helpers, including the Pi extension install list |
+| `cliamp/` | Terminal player config. Setup enables the YouTube Music provider |
 | `ai/` | Codex, Claude, Pi agents/skills, and local Pi extensions |
 | `better-vim/` | Neovim + Lua configuration with plugins |
 | `cmux/` | CMux multiplexer configuration |

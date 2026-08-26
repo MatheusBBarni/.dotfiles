@@ -155,6 +155,7 @@ alias spec-finder-dev='bun /Users/matheusbbarni/projects/spec-finder/src/cli.tsx
 
 alias hr="herdr"
 alias yz="yazi"
+alias ytm='cliamp --provider ytmusic'
 
 # Added by Antigravity
 export PATH="/Users/matheusbbarni/.antigravity/antigravity/bin:$PATH"

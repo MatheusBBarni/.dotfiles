@@ -14,9 +14,9 @@ set -euo pipefail
 #   bin/omarchy-theme-set-pi
 #
 # What this script does add: zsh/omz, bun, rust, java/kotlin, pnpm, turso,
-# watchman, bettervim, android studio, yazi, Space Mono, bitwarden, ghostty,
-# zed, tailscale, built-in Catppuccin dark, plus personal configs and Pi
-# extensions.
+# watchman, cliamp (YouTube Music), bettervim, android studio, yazi, Space Mono,
+# bitwarden, ghostty, zed, tailscale, built-in Catppuccin dark, plus personal
+# configs and Pi extensions.
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=setup-lib.sh
@@ -334,6 +334,26 @@ install_turso() {
   curl -sSfL https://get.tur.so/install.sh | bash
 }
 
+install_cliamp() {
+  echo "Installing cliamp"
+
+  if have_cmd cliamp; then
+    echo "Already installed: cliamp"
+  else
+    aur cliamp
+  fi
+
+  if have_cmd yt-dlp; then
+    echo "Already installed: yt-dlp"
+  else
+    pac yt-dlp
+  fi
+
+  if pacman -Q pipewire >/dev/null 2>&1 && ! pacman -Q pipewire-alsa >/dev/null 2>&1; then
+    pac pipewire-alsa
+  fi
+}
+
 install_watchman() {
   echo "Installing watchman"
   if have_cmd watchman; then
@@ -518,6 +538,9 @@ Not installed here:
 - Helium (use Omarchy's browser picker)
 - Handy (use `omarchy-voxtype-install`)
 
+cliamp starts on YouTube Music after setup.
+Stay signed into YouTube in Chromium so cookie login works.
+
 Theme is Omarchy's built-in Catppuccin dark.
 Light flavor: `omarchy theme set catppuccin-latte`.
 After login, run `tailscale up` if you want this machine on the tailnet.
@@ -548,6 +571,7 @@ run_step "rust" install_rust
 run_step "java-kotlin" install_java_kotlin
 run_step "pnpm" install_pnpm
 run_step "turso" install_turso
+run_step "cliamp" install_cliamp
 run_step "watchman" install_watchman
 run_step "go" install_go
 run_step "opam" setup_opam
@@ -562,6 +586,7 @@ run_step "android-studio" install_android_studio
 run_step "tailscale" install_tailscale
 run_step "zed-config" configure_zed
 run_step "herdr-config" configure_herdr
+run_step "cliamp-config" configure_cliamp
 run_step "catppuccin" set_catppuccin_theme
 
 print_notes
