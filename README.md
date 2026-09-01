@@ -1,12 +1,13 @@
 # 🎯 Dotfiles
 
-Personal configuration files and setup scripts for macOS, Linux, and Omarchy.
+Personal configuration files and setup scripts for macOS, Linux, Omarchy, and NixOS.
 
 ## Features
 
 - **macOS Bootstrap** (`macos-setup.sh`) - apps, developer tools, and configs
 - **Omarchy Bootstrap** (`omarchy-setup.sh`) - personal overlay only; skips agents and packages Omarchy already ships
 - **Linux Bootstrap** (`linux-setup.sh`) - full Arch/Linux setup for non-Omarchy boxes
+- **NixOS Bootstrap** (`nixos-setup.sh`) - NixOS only: Hyprland session, workstation services, Home Manager apps
 - **Editor Configs** - Vim, Neovim (better-vim), VSCode, and Zed
 - **Terminal Configs** - zsh, Warp, Ghostty, and tmux
 - **AI Integration** - Pi extensions, Codex/Claude configs, and shared skills
@@ -41,6 +42,7 @@ Or call a setup script directly:
 ./omarchy-setup.sh --bettervim-license YOUR_LICENSE_KEY
 ./macos-setup.sh --bettervim-license YOUR_LICENSE_KEY
 ./linux-setup.sh --bettervim-license YOUR_LICENSE_KEY
+./nixos-setup.sh --bettervim-license YOUR_LICENSE_KEY
 ```
 
 ### Targets
@@ -50,6 +52,7 @@ Or call a setup script directly:
 | `mac`, `macos` | `macos-setup.sh` | macOS |
 | `linux` | `linux-setup.sh` | Arch/Linux that is not Omarchy |
 | `omarchy` | `omarchy-setup.sh` | Omarchy. Skips agents and packages the distro already ships |
+| `nix`, `nixos` | `nixos-setup.sh` | NixOS only. Hyprland session + macos-setup app list |
 
 ### Bootstrap flags
 
@@ -66,6 +69,8 @@ Anything after the target is passed through to the setup script.
 | Flag | What it does |
 |------|----------------|
 | `--bettervim-license LICENSE` | Required the first time bettervim is installed. Safe to omit on re-runs if it is already there |
+| `--no-hyprland` | `nixos-setup.sh` only. Skip the Hyprland compositor module |
+| `--no-rebuild` | `nixos-setup.sh` only. Skip writing `/etc/nixos` imports and `nixos-rebuild` |
 | `-h`, `--help` | Show help |
 
 ### Re-runs
@@ -83,10 +88,12 @@ exec zsh
 
 | Path | Purpose |
 |------|---------|
-| `bootstrap.sh` | Curl-friendly launcher: `mac`, `linux`, or `omarchy` |
+| `bootstrap.sh` | Curl-friendly launcher: `mac`, `linux`, `omarchy`, or `nixos` |
 | `omarchy-setup.sh` | Omarchy overlay (does not reinstall shipped agents) |
 | `macos-setup.sh` | macOS bootstrap |
 | `linux-setup.sh` | Generic Arch/Linux bootstrap |
+| `nixos-setup.sh` | NixOS bootstrap (Hyprland + Home Manager). `nix-setup.sh` is a wrapper |
+| `nix/` | Home Manager flake and NixOS modules (`hyprland.nix`, `services.nix`) |
 | `setup-lib.sh` | Shared helpers, including the Pi extension install list |
 | `cliamp/` | Terminal player config. Setup enables the YouTube Music provider |
 | `ai/` | Codex, Claude, Pi agents/skills, and local Pi extensions |
@@ -145,10 +152,37 @@ The setup script configures these apps on the dock:
 - **Editors:** Update configurations in respective editor directories
 - **Bootstrap:** Modify setup scripts to add/remove packages and configurations
 
+## NixOS
+
+`nixos-setup.sh` is NixOS-only. It refuses to run on macOS, Arch, or Omarchy.
+
+It does three things:
+
+1. **System** — writes `/etc/nixos/dotfiles-imports.nix` and runs `nixos-rebuild switch` (Hyprland UWSM session, PipeWire, Docker, Tailscale, zsh, flakes)
+2. **User packages** — Home Manager flake in `nix/` with the macos-setup.sh app list
+3. **Overlay** — oh-my-zsh, bettervim, Helium AppImage, Pi/Codex/Claude configs
+
+Hyprland is a tiling Wayland compositor. The NixOS module (`programs.hyprland.enable`) is what registers a display-manager session. A user-profile `hyprland` package is not enough.
+
+| macOS | NixOS |
+|-------|--------|
+| Rectangle | Hyprland tiling (`Super` + arrows) |
+| Raycast | wofi (`Super+D`) |
+| Dock | waybar |
+| Ghostty / Zed / Bitwarden / Discord / Handy | nixpkgs |
+| Helium | AppImage (not in nixpkgs) |
+| Homebrew | Home Manager + `nixos-rebuild` |
+
+```bash
+./nixos-setup.sh --bettervim-license YOUR_LICENSE_KEY
+./bootstrap.sh nixos --bettervim-license YOUR_LICENSE_KEY
+```
+
 ## Requirements
 
 - **macOS:** 10.15+ (tested on recent versions)
-- **Linux:** Ubuntu 20.04+ or equivalent
+- **Linux:** Ubuntu 20.04+ or equivalent, or Arch
+- **NixOS:** unstable or 25.11+ recommended for Hyprland / Ghostty / Zed
 - **Tools:** Git, curl, basic development tools
 
 ## License

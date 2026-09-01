@@ -16,13 +16,14 @@ USE_SSH=0
 
 usage() {
   cat <<EOF
-Usage: $0 <mac|linux|omarchy> [setup options]
-       $0 [--ssh] [--dir PATH] <mac|linux|omarchy> [setup options]
+Usage: $0 <mac|linux|omarchy|nixos> [setup options]
+       $0 [--ssh] [--dir PATH] <mac|linux|omarchy|nixos> [setup options]
 
 Targets:
   mac, macos     macos-setup.sh
   linux          linux-setup.sh
   omarchy        omarchy-setup.sh
+  nix, nixos     nixos-setup.sh
 
 Options:
   --dir PATH     Clone / reuse this directory (default: \$DOTFILES_DIR or ~/.dotfiles)
@@ -93,6 +94,9 @@ script_for_target() {
     omarchy)
       printf '%s\n' "omarchy-setup.sh"
       ;;
+    nix | nixos)
+      printf '%s\n' "nixos-setup.sh"
+      ;;
     *)
       return 1
       ;;
@@ -147,7 +151,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$TARGET" ]]; then
-  echo "Missing target: mac, linux, or omarchy"
+  echo "Missing target: mac, linux, omarchy, or nixos"
   usage
   exit 1
 fi

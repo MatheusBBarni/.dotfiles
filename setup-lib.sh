@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared helpers for macos-setup.sh, linux-setup.sh, and omarchy-setup.sh.
+# Shared helpers for macos-setup.sh, linux-setup.sh, omarchy-setup.sh, and nixos-setup.sh.
 # Callers must set DOTFILES_DIR before sourcing this file.
 
 # Third-party packages plus the ones published from pi-extensions / pi-supergrok-usage.
@@ -15,8 +15,6 @@ PI_PACKAGES=(
   "npm:@juicesharp/rpiv-ask-user-question"
   "npm:@matheusbbarni/pi-message-queue"
   "npm:@matheusbbarni/pi-run-timer"
-  "npm:@matheusbbarni/pi-stitch-mcp"
-  "npm:@matheusbbarni/pi-goal-extension"
   "git:github.com/MatheusBBarni/pi-supergrok-usage"
 )
 
