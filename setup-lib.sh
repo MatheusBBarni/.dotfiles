@@ -15,6 +15,7 @@ PI_PACKAGES=(
   "npm:@juicesharp/rpiv-ask-user-question"
   "npm:@matheusbbarni/pi-message-queue"
   "npm:@matheusbbarni/pi-run-timer"
+  "npm:@matheusbbarni/pi-handy"
   "git:github.com/MatheusBBarni/pi-supergrok-usage"
 )
 
