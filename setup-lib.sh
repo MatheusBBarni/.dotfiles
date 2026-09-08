@@ -249,12 +249,24 @@ install_omp() {
 }
 
 # User-wide OMP LSP config. JS and TS share typescript-language-server.
+# Turn time only renders on the token-usage row, so both flags are required.
 configure_omp() {
   echo "Configuring OMP"
 
   mkdir -p "$HOME/.omp/agent"
   if [[ -f "$DOTFILES_DIR/omp/lsp.json" ]]; then
     link_file "$DOTFILES_DIR/omp/lsp.json" "$HOME/.omp/agent/lsp.json"
+  fi
+
+  if have_cmd omp; then
+    omp config set display.showTokenUsage true
+    omp config set display.showTurnTime true
+    omp config set statusLine.preset custom
+    omp config set statusLine.leftSegments '["pi","model","mode","collab","path","git","pr","context_pct"]'
+    omp config set statusLine.rightSegments '["session_name"]'
+    omp config set statusLine.segmentOptions '{"model":{"showThinkingLevel":true},"path":{"abbreviate":true,"maxLength":40,"stripWorkPrefix":true},"git":{"showBranch":true,"showStaged":true,"showUnstaged":true,"showUntracked":true}}'
+  else
+    echo "OMP CLI not found; skip OMP display settings"
   fi
 }
 
@@ -351,6 +363,15 @@ configure_herdr() {
   if [[ -f "$DOTFILES_DIR/herdr/move-space.py" ]]; then
     link_file "$DOTFILES_DIR/herdr/move-space.py" "$HOME/.config/herdr/move-space.py"
     chmod +x "$DOTFILES_DIR/herdr/move-space.py"
+  fi
+
+  if have_cmd herdr; then
+    herdr integration install omp || echo "herdr integration install omp failed"
+    if [[ -f "$DOTFILES_DIR/herdr/herdr-omp-agent-state.ts" ]]; then
+      mkdir -p "$HOME/.omp/agent/extensions"
+      link_file "$DOTFILES_DIR/herdr/herdr-omp-agent-state.ts" \
+        "$HOME/.omp/agent/extensions/herdr-omp-agent-state.ts"
+    fi
   fi
 }
 
