@@ -302,16 +302,18 @@ install_rust
 install_java_kotlin
 
 echo "Installing CLIs"
-brew install node pnpm gh neovim watchman go ocaml opam dune docker docker-compose docker-buildx tursodatabase/tap/turso
+brew install node pnpm gh neovim watchman go gopls jdtls typescript-language-server ocaml opam dune docker docker-compose docker-buildx tursodatabase/tap/turso
 install_cliamp
 install_bettervim
 install_fonts
 
 echo "Installing global Bun packages"
 bun add -g @earendil-works/pi-coding-agent opencode-ai
+install_omp
 configure_codex
 configure_pi amp-dark
 configure_claude
+configure_omp
 
 echo "Installing apps"
 brew install --cask rectangle raycast bitwarden helium-browser zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty

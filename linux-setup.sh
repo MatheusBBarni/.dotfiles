@@ -120,7 +120,7 @@ install_base_packages() {
   sudo pacman -Syu --noconfirm
   pac base-devel git curl wget file gnupg unzip zip openssl pkgconf fuse2 \
     zsh jq ripgrep fzf fd ffmpeg 7zip poppler imagemagick zoxide yazi resvg \
-    neovim go github-cli opam android-tools
+    neovim go gopls jdtls typescript-language-server github-cli opam android-tools
 }
 
 install_fonts() {
@@ -420,9 +420,11 @@ install_docker
 install_bettervim
 
 install_global_bun_packages
+install_omp
 configure_codex
 configure_pi amp-dark
 configure_claude
+configure_omp
 
 echo "Installing apps"
 install_desktop_apps

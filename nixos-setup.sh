@@ -11,7 +11,7 @@ set -euo pipefail
 # User (Home Manager):
 #   the macos-setup.sh app list from nixpkgs
 # Overlay (this script):
-#   oh-my-zsh, bettervim, Helium AppImage, Pi/Codex/Claude configs
+#   oh-my-zsh, bettervim, Helium AppImage, Pi/Codex/Claude/OMP configs
 #
 # macOS analogs:
 #   Rectangle -> Hyprland tiling
@@ -415,10 +415,10 @@ NixOS notes
 System (nixos-rebuild):
   Hyprland (UWSM session), PipeWire, Docker, Tailscale, zsh, flakes
 
-User (Home Manager, nixos-unstable):
   git neovim gh yazi fzf fd ripgrep zoxide ffmpeg ghostty zed
   bitwarden discord android-studio handy herdr cliamp turso bun
-  nodejs_24 pnpm go rustup jdk21 kotlin gradle watchman ...
+  nodejs_24 pnpm go gopls rustup jdk21 kotlin gradle jdt-language-server
+  typescript-language-server watchman ...
 
 Hyprland keys:
   Super+Return     ghostty
@@ -463,9 +463,11 @@ run_step "rust" install_rust_components
 run_step "opam" setup_opam
 run_step "bettervim" install_bettervim
 run_step "bun-globals" install_global_bun_packages
+run_step "omp" install_omp
 run_step "pi-config" configure_pi amp-dark
 run_step "codex-config" configure_codex
 run_step "claude-config" configure_claude
+run_step "omp-config" configure_omp
 run_step "helium" install_helium
 run_step "zed-config" configure_zed
 run_step "ghostty-config" configure_ghostty

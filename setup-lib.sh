@@ -224,6 +224,40 @@ PY
   done
 }
 
+# Oh My Pi (`omp`). Bun is preferred; the official installer is the fallback.
+install_omp() {
+  echo "Installing OMP"
+
+  export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+  export PATH="$BUN_INSTALL/bin:$HOME/.local/bin:$PATH"
+
+  if have_cmd omp; then
+    echo "Already installed: omp"
+    return 0
+  fi
+
+  if have_cmd bun; then
+    echo "Installing OMP with bun (@oh-my-pi/pi-coding-agent)"
+    if bun install -g @oh-my-pi/pi-coding-agent; then
+      return 0
+    fi
+    echo "bun install failed; falling back to omp.sh installer"
+  fi
+
+  curl -fsSL https://omp.sh/install | sh
+  export PATH="$BUN_INSTALL/bin:$HOME/.local/bin:$PATH"
+}
+
+# User-wide OMP LSP config. JS and TS share typescript-language-server.
+configure_omp() {
+  echo "Configuring OMP"
+
+  mkdir -p "$HOME/.omp/agent"
+  if [[ -f "$DOTFILES_DIR/omp/lsp.json" ]]; then
+    link_file "$DOTFILES_DIR/omp/lsp.json" "$HOME/.omp/agent/lsp.json"
+  fi
+}
+
 configure_codex() {
   echo "Configuring Codex"
 

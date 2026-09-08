@@ -1,0 +1,46 @@
+{
+  "servers": {
+    "typescript-language-server": {
+      "command": "typescript-language-server",
+      "args": ["--stdio"],
+      "fileTypes": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"],
+      "rootMarkers": ["package.json", "tsconfig.json", "jsconfig.json"],
+      "initOptions": {
+        "hostInfo": "omp-coding-agent",
+        "preferences": {
+          "includeInlayParameterNameHints": "all",
+          "includeInlayVariableTypeHints": true,
+          "includeInlayFunctionParameterTypeHints": true
+        }
+      }
+    },
+    "jdtls": {
+      "command": "jdtls",
+      "args": [],
+      "fileTypes": [".java"],
+      "rootMarkers": [
+        "pom.xml",
+        "build.gradle",
+        "build.gradle.kts",
+        "settings.gradle",
+        ".project"
+      ]
+    },
+    "gopls": {
+      "command": "gopls",
+      "args": ["serve"],
+      "fileTypes": [".go", ".mod", ".sum"],
+      "rootMarkers": ["go.mod", "go.work", "go.sum"],
+      "settings": {
+        "gopls": {
+          "analyses": {
+            "unusedparams": true,
+            "shadow": true
+          },
+          "staticcheck": true,
+          "gofumpt": true
+        }
+      }
+    }
+  }
+}

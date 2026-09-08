@@ -10,7 +10,7 @@ Personal configuration files and setup scripts for macOS, Linux, Omarchy, and Ni
 - **NixOS Bootstrap** (`nixos-setup.sh`) - NixOS only: Hyprland session, workstation services, Home Manager apps
 - **Editor Configs** - Vim, Neovim (better-vim), VSCode, and Zed
 - **Terminal Configs** - zsh, Warp, Ghostty, and tmux
-- **AI Integration** - Pi extensions, Codex/Claude configs, and shared skills
+- **AI Integration** - OMP (oh-my-pi), Pi extensions, Codex/Claude configs, and shared skills
 - **cliamp** - terminal music player; setup enables YouTube Music via browser cookies
 
 ## How to use
@@ -96,6 +96,7 @@ exec zsh
 | `nix/` | Home Manager flake and NixOS modules (`hyprland.nix`, `services.nix`) |
 | `setup-lib.sh` | Shared helpers, including the Pi extension install list |
 | `cliamp/` | Terminal player config. Setup enables the YouTube Music provider |
+| `omp/` | OMP LSP config (`lsp.json`), linked to `~/.omp/agent/lsp.json` |
 | `ai/` | Codex, Claude, Pi agents/skills, and local Pi extensions |
 | `better-vim/` | Neovim + Lua configuration with plugins |
 | `cmux/` | CMux multiplexer configuration |

@@ -54,7 +54,9 @@
       nodejs_24
       pnpm
       bun
+      typescript-language-server
       go
+      gopls
       rustup
       ocaml
       opam
@@ -69,6 +71,7 @@
       jdk21
       kotlin
       gradle
+      jdt-language-server
 
       # Desktop apps
       ghostty

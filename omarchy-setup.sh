@@ -15,8 +15,8 @@ set -euo pipefail
 #
 # What this script does add: zsh/omz, bun, rust, java/kotlin, pnpm, turso,
 # watchman, cliamp (YouTube Music), bettervim, android studio, yazi, Space Mono,
-# bitwarden, ghostty, zed, tailscale, built-in Catppuccin dark, plus personal
-# configs and Pi extensions.
+# bitwarden, ghostty, zed, tailscale, built-in Catppuccin dark, omp if missing,
+# JS/TS/Java/Go language servers, plus personal configs and Pi extensions.
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=setup-lib.sh
@@ -137,7 +137,7 @@ install_gap_packages() {
   # yazi is not in omarchy-base.packages. ffmpeg/7zip/poppler/resvg are
   # the extras it wants; fd/fzf/ripgrep/zoxide/imagemagick are already there.
   # pac --needed skips packages that are already present.
-  pac yazi ffmpeg 7zip poppler resvg
+  pac yazi ffmpeg 7zip poppler resvg gopls jdtls typescript-language-server
 
   if have_cmd bitwarden || pacman -Q bitwarden >/dev/null 2>&1; then
     echo "Already installed: bitwarden"
@@ -520,7 +520,7 @@ print_notes() {
 ------------------------------------------------------------
 Skipped on purpose (Omarchy already has these)
 ------------------------------------------------------------
-- pi / oh-my-pi     mise (install/user/mise.sh)
+- pi                mise (install/user/mise.sh)
 - claude / codex    mise
 - opencode / crush  mise
 - herdr             omarchy-base.packages
@@ -544,6 +544,7 @@ Stay signed into YouTube in Chromium so cookie login works.
 Theme is Omarchy's built-in Catppuccin dark.
 Light flavor: `omarchy theme set catppuccin-latte`.
 After login, run `tailscale up` if you want this machine on the tailnet.
+omp is installed if it is missing. LSP config (JS/TS, Java, Go) is linked from omp/lsp.json.
 Safe to re-run: already-installed tools and the current theme are skipped.
 ------------------------------------------------------------
 EOF
@@ -578,6 +579,8 @@ run_step "opam" setup_opam
 run_step "bettervim" install_bettervim
 run_step "pi" ensure_pi
 run_step "pi-config" configure_pi
+run_step "omp" install_omp
+run_step "omp-config" configure_omp
 run_step "codex-config" configure_codex
 run_step "claude-config" configure_claude
 run_step "ghostty" install_ghostty
