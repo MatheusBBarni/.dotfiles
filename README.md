@@ -1,191 +1,306 @@
-# 🎯 Dotfiles
+# .dotfiles
 
-Personal configuration files and setup scripts for macOS, Linux, Omarchy, and NixOS.
+<!-- markdownlint-disable MD013 -->
+Cross-platform shell, editor, terminal, and workstation setup for macOS, Arch Linux, Omarchy, NixOS, and a minimal Windows gaming machine.
 
-## Features
+> [!NOTE]
+> The Windows setup is intentionally separate from the developer-oriented macOS and Linux setups. It does not install Claude, Codex, OMP, Pi, or other agent tooling.
 
-- **macOS Bootstrap** (`macos-setup.sh`) - apps, developer tools, and configs
-- **Omarchy Bootstrap** (`omarchy-setup.sh`) - personal overlay only; skips agents and packages Omarchy already ships
-- **Linux Bootstrap** (`linux-setup.sh`) - full Arch/Linux setup for non-Omarchy boxes
-- **NixOS Bootstrap** (`nixos-setup.sh`) - NixOS only: Hyprland session, workstation services, Home Manager apps
-- **Editor Configs** - Vim, Neovim (better-vim), VSCode, and Zed
-- **Terminal Configs** - zsh, Warp, Ghostty, and tmux
-- **AI Integration** - OMP (oh-my-pi), Pi extensions, Codex/Claude configs, and shared skills
-- **cliamp** - terminal music player; setup enables YouTube Music via browser cookies
+## Quick navigation
 
-## How to use
+- [What is included](#what-is-included)
+- [Common bootstrap](#common-bootstrap)
+- [macOS](#macos)
+- [Linux](#linux)
+  - [Omarchy](#omarchy)
+  - [NixOS](#nixos)
+- [Windows gaming](#windows-gaming)
+- [After setup](#after-setup)
+- [Repository layout](#repository-layout)
+- [Troubleshooting](#troubleshooting)
 
-`bootstrap.sh` picks the setup script from a target name.
-On a new machine it clones this repo to `~/.dotfiles` (or reuses that clone), then runs the matching setup.
-If you already have the repo checked out, it uses that copy instead.
+## What is included
 
-### One-liner
+- Platform setup scripts with package installation and configuration steps
+- Zsh, Oh My Zsh, tmux, Ghostty, Warp, and CMux configuration
+- Neovim, VS Code, and Zed configuration
+- OMP, Pi, Codex, Claude Code, and shared agent configuration for Unix setups
+- CLIAMP configured for YouTube Music using an existing browser session
+- NixOS Home Manager and optional Hyprland modules
+- A minimal Windows gaming setup with Steam, Brave, Battle.net, and RubinOT
 
-Args after `bash -s --` are required so the target reaches the script.
+## Requirements
+
+| Platform | Requirements |
+| --- | --- |
+| macOS | macOS 10.15+, internet access, administrator access, Git/curl or Xcode Command Line Tools |
+| Linux | Arch Linux, internet access, `sudo`, and a working `pacman` environment |
+| Omarchy | An existing Omarchy installation |
+| NixOS | An existing NixOS installation with flakes enabled or available |
+| Windows | Windows 10/11 64-bit and WinGet/App Installer |
+
+The macOS and Linux scripts require a bettervim license. Omarchy and NixOS require it only when bettervim is not already installed.
+
+> [!WARNING]
+> Setup scripts install packages, change shell/configuration files, and download installers from upstream projects. Review the script for your platform before running it on a machine with existing configuration.
+
+## Common bootstrap
+
+`bootstrap.sh` is a Bash launcher for macOS, Linux, Omarchy, and NixOS. It clones this repository to `~/.dotfiles` when needed, reuses an existing clone, and then runs the selected setup script.
+
+```bash
+git clone https://github.com/MatheusBBarni/.dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+./bootstrap.sh mac --bettervim-license YOUR_LICENSE_KEY
+```
+
+### Bootstrap targets
+
+| Target | Script | Platform |
+| --- | --- | --- |
+| `mac`, `macos`, `osx`, `darwin` | `macos-setup.sh` | macOS |
+| `linux` | `linux-setup.sh` | Generic Arch Linux |
+| `omarchy` | `omarchy-setup.sh` | Omarchy |
+| `nix`, `nixos` | `nixos-setup.sh` | NixOS |
+
+### Bootstrap flags
+
+| Flag | Description |
+| --- | --- |
+| `--dir PATH` | Clone or reuse a different directory instead of `~/.dotfiles` |
+| `--ssh` | Clone using `git@github.com:MatheusBBarni/.dotfiles.git` instead of HTTPS |
+| `-h`, `--help` | Show bootstrap help |
+
+Arguments after the target are passed to that platform's setup script.
+
+## macOS
+
+`macos-setup.sh` installs a complete development workstation:
+
+- Homebrew, CLI utilities, zsh, Oh My Zsh, and shell plugins
+- Node.js 24 through nvm, Bun, pnpm, Rust, Java/Kotlin, Go, OCaml, and Docker
+- bettervim, OMP, Pi packages, Codex and Claude Code configuration
+- Zed, Ghostty, Helium, Bitwarden, Discord, Tailscale, Android Studio, Handy, and other desktop apps
+- Fonts, Dock entries, CLIAMP, and tracked configuration files
+
+### macOS one-liner
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/bootstrap.sh \
+  | bash -s -- mac --bettervim-license YOUR_LICENSE_KEY
+```
+
+### macOS from a clone
+
+```bash
+./macos-setup.sh --bettervim-license YOUR_LICENSE_KEY
+```
+
+### macOS flags
+
+| Flag | Description |
+| --- | --- |
+| `--bettervim-license LICENSE` | bettervim license key; required |
+| `-h`, `--help` | Show setup help |
+
+Xcode is installed when the Mac App Store is signed in. The script skips it and prints a note otherwise.
+
+## Linux
+
+`linux-setup.sh` targets generic Arch Linux. It uses official packages through `pacman` and AUR packages through `yay`, bootstrapping `yay` when necessary.
+
+It installs a development workstation similar to macOS, including zsh, Node.js 24, Bun, Rust, Java/Kotlin, Go, Docker, bettervim, OMP, Pi, Codex, Claude Code, Zed, Ghostty, CLIAMP, Tailscale, and desktop applications.
+
+### Linux one-liner
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/bootstrap.sh \
+  | bash -s -- linux --bettervim-license YOUR_LICENSE_KEY
+```
+
+### Linux from a clone
+
+```bash
+./linux-setup.sh --bettervim-license YOUR_LICENSE_KEY
+```
+
+### Linux flags
+
+| Flag | Description |
+| --- | --- |
+| `--bettervim-license LICENSE` | bettervim license key; required |
+| `-h`, `--help` | Show setup help |
+
+> [!IMPORTANT]
+> This is an Arch/pacman setup. It is not an Ubuntu or Debian installer.
+
+## Omarchy
+
+Omarchy is handled as a separate Linux overlay. `omarchy-setup.sh` assumes the distro already provides many base packages and agents, so it installs only the missing tools and personal configuration.
+
+It skips packages Omarchy already ships, including Pi, Claude, Codex, OpenCode, Herdr, Docker, Git, Neovim, GitHub CLI, common shell utilities, Chromium, and tmux. It adds the remaining development tools, bettervim, OMP configuration, Zed, Ghostty, Tailscale, Android Studio, CLIAMP, fonts, and personal files.
+
+### Omarchy one-liner
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/bootstrap.sh \
   | bash -s -- omarchy --bettervim-license YOUR_LICENSE_KEY
 ```
 
-### From a clone
-
-```bash
-git clone https://github.com/MatheusBBarni/.dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-./bootstrap.sh omarchy --bettervim-license YOUR_LICENSE_KEY
-```
-
-Or call a setup script directly:
+### Omarchy from a clone
 
 ```bash
 ./omarchy-setup.sh --bettervim-license YOUR_LICENSE_KEY
-./macos-setup.sh --bettervim-license YOUR_LICENSE_KEY
-./linux-setup.sh --bettervim-license YOUR_LICENSE_KEY
+```
+
+### Omarchy flags
+
+| Flag | Description |
+| --- | --- |
+| `--bettervim-license LICENSE` | bettervim license key when bettervim is not installed |
+| `-h`, `--help` | Show setup help |
+
+The script applies Omarchy's built-in Catppuccin dark theme, configures CLIAMP for YouTube Music, and leaves existing distro-managed agents untouched.
+
+## NixOS
+
+`nixos-setup.sh` is for an existing NixOS host. It:
+
+1. Writes the NixOS drop-in and optionally runs `nixos-rebuild switch`.
+2. Applies the Home Manager flake in `nix/` with the workstation package set.
+3. Links shell, editor, terminal, agent, OMP, CLIAMP, and desktop configuration.
+4. Enables the optional Hyprland session, PipeWire, Docker, Tailscale, zsh, and related services.
+
+`nix-setup.sh` is a compatibility wrapper for `nixos-setup.sh`.
+
+### NixOS one-liner
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/bootstrap.sh \
+  | bash -s -- nixos --bettervim-license YOUR_LICENSE_KEY
+```
+
+### NixOS from a clone
+
+```bash
 ./nixos-setup.sh --bettervim-license YOUR_LICENSE_KEY
 ```
 
-### Targets
+### NixOS flags
 
-| Target | Script | Use when |
-|--------|--------|----------|
-| `mac`, `macos` | `macos-setup.sh` | macOS |
-| `linux` | `linux-setup.sh` | Arch/Linux that is not Omarchy |
-| `omarchy` | `omarchy-setup.sh` | Omarchy. Skips agents and packages the distro already ships |
-| `nix`, `nixos` | `nixos-setup.sh` | NixOS only. Hyprland session + macos-setup app list |
+| Flag | Description |
+| --- | --- |
+| `--bettervim-license LICENSE` | bettervim license key when bettervim is not installed |
+| `--no-hyprland` | Skip the Hyprland compositor module |
+| `--no-rebuild` | Do not write `/etc/nixos` imports or run `nixos-rebuild` |
+| `-h`, `--help` | Show setup help |
 
-### Bootstrap flags
+After login, select `Hyprland (UWSM)` if enabled. Run `exec zsh` and `tailscale up` when appropriate.
 
-| Flag | What it does |
-|------|----------------|
-| `--ssh` | Clone with `git@github.com` instead of HTTPS |
-| `--dir PATH` | Clone or reuse this directory instead of `~/.dotfiles` |
-| `-h`, `--help` | Show help |
+## Windows gaming
 
-Anything after the target is passed through to the setup script.
+`windows-setup.ps1` is a PowerShell script and is run directly. It is not dispatched by `bootstrap.sh`.
 
-### Setup flags
+The default setup:
 
-| Flag | What it does |
-|------|----------------|
-| `--bettervim-license LICENSE` | Required the first time bettervim is installed. Safe to omit on re-runs if it is already there |
-| `--no-hyprland` | `nixos-setup.sh` only. Skip the Hyprland compositor module |
-| `--no-rebuild` | `nixos-setup.sh` only. Skip writing `/etc/nixos` imports and `nixos-rebuild` |
-| `-h`, `--help` | Show help |
+- Verifies 64-bit Windows and WinGet availability
+- Installs Steam, Brave, and Battle.net through exact WinGet package IDs
+- Downloads RubinOT from its official download endpoint and opens the installer interactively
+- Does not install developer tools or agent harnesses
+- Skips debloating unless explicitly requested
 
-### Re-runs
+### Windows one-liner
 
-Setup scripts skip tools, fonts, themes, and Pi packages that are already installed.
-If a step fails, run the same command again.
+```powershell
+& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/windows-setup.ps1")))
+```
 
-When it finishes, reload the shell:
+### Windows one-liner with debloat
+
+```powershell
+& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/windows-setup.ps1"))) -RunDebloat
+```
+
+### Windows from a clone
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\windows-setup.ps1
+```
+
+### Windows flags
+
+| Flag | Description |
+| --- | --- |
+| `-RunDebloat` | Run Win11Debloat's recommended settings without removing apps |
+| `-RemoveBloatApps` | With `-RunDebloat`, also remove Win11Debloat's default pre-installed app selection |
+| `-WhatIf` | Print actions without installing anything |
+
+`-RemoveBloatApps` requires `-RunDebloat` and may request administrator access. Review the upstream [Win11Debloat app list](https://github.com/Raphire/Win11Debloat/blob/master/Config/Apps.json) before using it.
+
+If WinGet is missing, install or update [App Installer](https://apps.microsoft.com/detail/9NBLGGH4NNS1), then rerun the script.
+
+## After setup
+
+Unix setup scripts are safe to rerun; completed package and configuration steps are skipped where the platform supports it. If a step fails, rerun the same command.
+
+Reload the shell after setup:
 
 ```bash
 exec zsh
 ```
 
-## Directory Structure
+Useful follow-up actions:
+
+- Sign in to YouTube in the browser used by CLIAMP so cookie-based playback works.
+- Run `tailscale up` if the machine should join the tailnet.
+- On NixOS with Hyprland enabled, log out and select the Hyprland UWSM session.
+- On macOS, review the Dock after the app installations complete.
+
+## Repository layout
 
 | Path | Purpose |
-|------|---------|
-| `bootstrap.sh` | Curl-friendly launcher: `mac`, `linux`, `omarchy`, or `nixos` |
-| `omarchy-setup.sh` | Omarchy overlay (does not reinstall shipped agents) |
-| `macos-setup.sh` | macOS bootstrap |
-| `linux-setup.sh` | Generic Arch/Linux bootstrap |
-| `nixos-setup.sh` | NixOS bootstrap (Hyprland + Home Manager). `nix-setup.sh` is a wrapper |
-| `nix/` | Home Manager flake and NixOS modules (`hyprland.nix`, `services.nix`) |
-| `setup-lib.sh` | Shared helpers, including the Pi extension install list |
-| `cliamp/` | Terminal player config. Setup enables the YouTube Music provider |
-| `omp/` | OMP LSP config (`lsp.json`), linked to `~/.omp/agent/lsp.json` |
-| `ai/` | Codex, Claude, Pi agents/skills, and local Pi extensions |
-| `better-vim/` | Neovim + Lua configuration with plugins |
-| `cmux/` | CMux multiplexer configuration |
-| `ghostty/` | Ghostty terminal emulator themes and configs |
-| `pi-subagents/` | Pi Subagents setup and documentation |
-| `vscode/` | VSCode settings, keybindings, and extensions |
-| `vscode-snippets/` | Code snippets for VSCode |
-| `warp/` | Warp terminal keybindings |
-| `zed/` | Zed editor settings and keybindings |
-| `.zshrc` | Zsh shell configuration |
-| `.tmux.conf` | Tmux configuration |
-| `init.vim` | Vim/Neovim init configuration |
+| --- | --- |
+| `bootstrap.sh` | Curl-friendly Unix setup launcher |
+| `macos-setup.sh` | Full macOS workstation setup |
+| `linux-setup.sh` | Full generic Arch Linux setup |
+| `omarchy-setup.sh` | Omarchy-specific personal overlay |
+| `nixos-setup.sh` | NixOS system and Home Manager setup |
+| `windows-setup.ps1` | Minimal Windows gaming setup |
+| `setup-lib.sh` | Shared Unix helpers and Pi/OMP configuration |
+| `ai/` | Agent definitions, skills, extensions, and tool configuration |
+| `nix/` | Nix flake, Home Manager, Hyprland, and NixOS modules |
+| `zed/` | Zed settings, keymap, themes, snippets, and export tools |
+| `ghostty/` | Ghostty config, themes, and icons |
+| `herdr/` | Herdr config and OMP integration |
+| `cliamp/` | CLIAMP YouTube Music configuration template |
+| `vscode/` | VS Code settings and extension installer |
+| `better-vim/` | Neovim Lua configuration and plugin files |
+| `.zshrc` | Zsh aliases, environment setup, and integrations |
+| `.tmux.conf` | Tmux keybindings and plugins |
 
-## Editor Configurations
+## Troubleshooting
 
-### Vim/Neovim
-- **File:** `init.vim` + `better-vim/` directory
-- **Features:** Lua support, plugin management, custom overrides
-
-### VSCode
-- **Keybindings:** `vscode/keybindings.json`
-- **Settings:** `vscode/settings.json`
-- **Extensions:** Install via `vscode/vscode-extensions.sh`
-- **Snippets:** Custom snippets in `vscode-snippets/`
-
-### Zed
-- **Keybindings:** `zed/keymap.json`
-- **Settings:** `zed/settings.json`
-- **Extensions:** Auto-install via `zed/auto-install-extensions.json`
-- **Export:** Export settings with `zed/export-zed-config.sh`
-
-### Warp Terminal
-- **Keybindings:** `warp/keybindings.yaml`
-
-## System Integration
-
-### Dock Apps (macOS)
-The setup script configures these apps on the dock:
-- Helium
-- Zed
-- YouTube Music
-- Tailscale
-- Docker
-- Discord
-- System Settings
-
-### Themes
-- **Ghostty:** Eldritch theme with custom icons
-
-## Customization
-
-- **Shell:** Edit `.zshrc` for custom aliases, functions, and environment variables
-- **Tmux:** Modify `.tmux.conf` for keybindings and appearance
-- **Editors:** Update configurations in respective editor directories
-- **Bootstrap:** Modify setup scripts to add/remove packages and configurations
-
-## NixOS
-
-`nixos-setup.sh` is NixOS-only. It refuses to run on macOS, Arch, or Omarchy.
-
-It does three things:
-
-1. **System** — writes `/etc/nixos/dotfiles-imports.nix` and runs `nixos-rebuild switch` (Hyprland UWSM session, PipeWire, Docker, Tailscale, zsh, flakes)
-2. **User packages** — Home Manager flake in `nix/` with the macos-setup.sh app list
-3. **Overlay** — oh-my-zsh, bettervim, Helium AppImage, Pi/Codex/Claude configs
-
-Hyprland is a tiling Wayland compositor. The NixOS module (`programs.hyprland.enable`) is what registers a display-manager session. A user-profile `hyprland` package is not enough.
-
-| macOS | NixOS |
-|-------|--------|
-| Rectangle | Hyprland tiling (`Super` + arrows) |
-| Raycast | wofi (`Super+D`) |
-| Dock | waybar |
-| Ghostty / Zed / Bitwarden / Discord / Handy | nixpkgs |
-| Helium | AppImage (not in nixpkgs) |
-| Homebrew | Home Manager + `nixos-rebuild` |
+Show platform-specific options before installing:
 
 ```bash
-./nixos-setup.sh --bettervim-license YOUR_LICENSE_KEY
-./bootstrap.sh nixos --bettervim-license YOUR_LICENSE_KEY
+./macos-setup.sh --help
+./linux-setup.sh --help
+./omarchy-setup.sh --help
+./nixos-setup.sh --help
 ```
 
-## Requirements
+For Windows:
 
-- **macOS:** 10.15+ (tested on recent versions)
-- **Linux:** Ubuntu 20.04+ or equivalent, or Arch
-- **NixOS:** unstable or 25.11+ recommended for Hyprland / Ghostty / Zed
-- **Tools:** Git, curl, basic development tools
+```powershell
+Get-Help .\windows-setup.ps1 -Full
+.\windows-setup.ps1 -WhatIf
+```
 
-## License
+Common fixes:
 
-Personal configuration. Use as reference for your own dotfiles.
+- **bettervim fails:** rerun with `--bettervim-license YOUR_LICENSE_KEY`.
+- **Arch package installation fails:** confirm `sudo pacman -Syu` works, then rerun the script.
+- **NixOS rebuild fails:** rerun with `--no-rebuild` to apply the user-level Home Manager and configuration steps separately.
+- **Windows WinGet is missing:** install or update App Installer, then rerun.
+- **CLIAMP cannot play YouTube Music:** sign in to YouTube in the detected browser and rerun the setup.
