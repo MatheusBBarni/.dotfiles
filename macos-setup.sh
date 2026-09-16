@@ -7,6 +7,39 @@ source "$DOTFILES_DIR/setup-lib.sh"
 
 NODE_VERSION="24"
 BETTERVIM_LICENSE=""
+SKIP_INSTALLS=()
+
+SKIP_COMPONENTS=(
+  bettervim
+  bun
+  claude
+  cliamp
+  codex
+  fonts
+  go
+  handy
+  herdr
+  java
+  nvm
+  ohmyzsh
+  omp
+  opencode
+  pi
+  rust
+  apps
+  dock
+)
+
+skip_component_supported() {
+  local component="$1"
+  local supported
+  for supported in "${SKIP_COMPONENTS[@]}"; do
+    if [[ "$supported" == "$component" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
 DOCK_APPS=(
   "/Applications/Helium.app"
   "/Applications/Zed.app"
@@ -23,7 +56,9 @@ Usage: $0 [options]
 
 Options:
   --bettervim-license LICENSE  Optional license key for bettervim installation
-  -h, --help                   Show this help
+  --skip COMPONENTS           Comma-separated components to skip
+                               (rust,go,codex,claude,...)
+  -h, --help                  Show this help
 EOF
 }
 
@@ -38,6 +73,27 @@ parse_args() {
         BETTERVIM_LICENSE="$2"
         shift 2
         ;;
+      --skip)
+        if [[ $# -lt 2 ]]; then
+          echo "--skip requires a comma-separated component list"
+          exit 1
+        fi
+
+        local component
+        local requested_components
+        IFS=',' read -r -a requested_components <<< "$2"
+        for component in "${requested_components[@]}"; do
+          component="${component//[[:space:]]/}"
+          if skip_component_supported "$component"; then
+            SKIP_INSTALLS+=("$component")
+          else
+            echo "Unknown --skip component: $component"
+            echo "Supported components: ${SKIP_COMPONENTS[*]}"
+            exit 1
+          fi
+        done
+        shift 2
+        ;;
       -h | --help)
         usage
         exit 0
@@ -49,6 +105,27 @@ parse_args() {
         ;;
     esac
   done
+}
+
+skip_requested() {
+  local component="$1"
+  local requested
+  for requested in "${SKIP_INSTALLS[@]}"; do
+    if [[ "$requested" == "$component" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+run_optional() {
+  local component="$1"
+  shift
+  if skip_requested "$component"; then
+    echo "Skipping $component (--skip)"
+    return 0
+  fi
+  "$@"
 }
 
 install_brew() {
@@ -192,6 +269,11 @@ install_rust() {
   rustup default stable
   rustup component add rustfmt clippy rust-analyzer
 }
+install_go() {
+  echo "Installing Go"
+  brew install go gopls
+}
+
 
 install_fonts() {
   echo "Installing fonts"
@@ -211,13 +293,17 @@ install_global_bun_packages() {
     return 0
   fi
 
-  if command -v pi >/dev/null 2>&1; then
+  if skip_requested pi; then
+    echo "Skipping pi (--skip)"
+  elif command -v pi >/dev/null 2>&1; then
     echo "Already installed: pi"
   else
     bun add -g @earendil-works/pi-coding-agent
   fi
 
-  if command -v opencode >/dev/null 2>&1; then
+  if skip_requested opencode; then
+    echo "Skipping opencode (--skip)"
+  elif command -v opencode >/dev/null 2>&1; then
     echo "Already installed: opencode"
   else
     bun add -g opencode-ai
@@ -304,6 +390,10 @@ install_handy() {
   hdiutil detach "$mount_point" -quiet
   rm -rf "$mount_point" "$tmp_dmg"
 }
+install_apps() {
+  echo "Installing apps"
+  brew install --cask rectangle raycast bitwarden helium-browser google-chrome zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
+}
 
 install_xcode() {
   echo "Installing Xcode"
@@ -332,34 +422,38 @@ echo "Here we go again!"
 
 install_brew
 install_base_packages
-install_oh_my_zsh
+run_optional ohmyzsh install_oh_my_zsh
 setup_zshrc_local
-install_nvm
-install_bun
-install_herdr
-install_rust
-install_java_kotlin
+run_optional nvm install_nvm
+run_optional bun install_bun
+run_optional herdr install_herdr
+run_optional rust install_rust
+run_optional go install_go
+run_optional java install_java_kotlin
 
 echo "Installing CLIs"
-brew install node pnpm gh neovim watchman go gopls jdtls typescript-language-server ocaml opam dune docker docker-compose docker-buildx tursodatabase/tap/turso
-install_cliamp
-install_bettervim
-install_fonts
+brew install node pnpm gh neovim watchman jdtls typescript-language-server ocaml opam dune docker docker-compose docker-buildx tursodatabase/tap/turso
+run_optional cliamp install_cliamp
+run_optional bettervim install_bettervim
+run_optional fonts install_fonts
 install_global_bun_packages
-install_omp
-configure_codex
-configure_pi amp-dark
-configure_claude
-configure_omp
+if skip_requested bun && ! have_cmd omp; then
+  echo "Skipping omp because bun was skipped"
+else
+  run_optional omp install_omp
+fi
+run_optional codex configure_codex
+run_optional pi configure_pi amp-dark
+run_optional claude configure_claude
+run_optional omp configure_omp
 
-echo "Installing apps"
-brew install --cask rectangle raycast bitwarden helium-browser google-chrome zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
+run_optional apps install_apps
 configure_zed
-install_handy
+run_optional handy install_handy
 
 configure_ghostty
-configure_herdr
-configure_cliamp
-configure_dock
+run_optional herdr configure_herdr
+run_optional cliamp configure_cliamp
+run_optional dock configure_dock
 
 echo "Done"

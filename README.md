@@ -104,7 +104,18 @@ curl -fsSL https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/boot
 | Flag | Description |
 | --- | --- |
 | `--bettervim-license LICENSE` | Optional bettervim license key; omitted to skip bettervim |
+| `--skip COMPONENTS` | Skip comma-separated components such as `rust,go,codex,claude` |
 | `-h`, `--help` | Show setup help |
+
+For example, to omit Rust, Codex, and Claude configuration:
+
+```bash
+./macos-setup.sh --skip rust,codex,claude
+```
+
+Supported skip components: `bettervim`, `bun`, `claude`, `cliamp`, `codex`,
+`fonts`, `go`, `handy`, `herdr`, `java`, `nvm`, `ohmyzsh`, `omp`, `opencode`,
+`pi`, `rust`, `apps`, and `dock`.
 
 Xcode is installed when the Mac App Store is signed in. The script skips it and prints a note otherwise.
 
