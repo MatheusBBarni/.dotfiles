@@ -80,7 +80,7 @@ Arguments after the target are passed to that platform's setup script.
 - Homebrew, CLI utilities, zsh, Oh My Zsh, and shell plugins
 - Node.js 24 through nvm, Bun, pnpm, Rust, Java/Kotlin, Go, OCaml, and Docker
 - bettervim, OMP, Pi packages, Codex and Claude Code configuration
-- Zed, Ghostty, Helium, Bitwarden, Discord, Tailscale, Android Studio, Handy, and other desktop apps
+- Google Chrome, Zed, Ghostty, Helium, Bitwarden, Discord, Tailscale, Android Studio, Handy, and other desktop apps
 - Fonts, Dock entries, CLIAMP, and tracked configuration files
 
 ### macOS one-liner

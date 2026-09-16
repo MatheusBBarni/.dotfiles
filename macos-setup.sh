@@ -316,7 +316,7 @@ configure_claude
 configure_omp
 
 echo "Installing apps"
-brew install --cask rectangle raycast bitwarden helium-browser zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
+brew install --cask rectangle raycast bitwarden helium-browser google-chrome zed pear-devs/pear/pear-desktop tailscale docker android-studio android-platform-tools discord ghostty
 configure_zed
 install_handy
 
