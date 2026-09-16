@@ -2,6 +2,48 @@
 # Shared helpers for macos-setup.sh, linux-setup.sh, omarchy-setup.sh, and nixos-setup.sh.
 # Callers must set DOTFILES_DIR before sourcing this file.
 
+
+if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
+  UI_RESET=$'\033[0m'
+  UI_BOLD=$'\033[1m'
+  UI_BLUE=$'\033[34m'
+  UI_CYAN=$'\033[36m'
+  UI_GREEN=$'\033[32m'
+  UI_RED=$'\033[31m'
+  UI_YELLOW=$'\033[33m'
+else
+  UI_RESET=""
+  UI_BOLD=""
+  UI_BLUE=""
+  UI_CYAN=""
+  UI_GREEN=""
+  UI_RED=""
+  UI_YELLOW=""
+fi
+
+ui_title() {
+  printf '%s%s◆ %s%s\n' "$UI_BOLD" "$UI_CYAN" "$*" "$UI_RESET"
+}
+
+ui_step() {
+  printf '\n%s➜ %s%s\n' "$UI_BOLD$UI_CYAN" "$*" "$UI_RESET"
+}
+
+ui_info() {
+  printf '%sℹ %s%s\n' "$UI_BLUE" "$*" "$UI_RESET"
+}
+
+ui_success() {
+  printf '%s✔ %s%s\n' "$UI_GREEN" "$*" "$UI_RESET"
+}
+
+ui_warn() {
+  printf '%s⚠ %s%s\n' "$UI_YELLOW" "$*" "$UI_RESET"
+}
+
+ui_error() {
+  printf '%s✖ %s%s\n' "$UI_RED" "$*" "$UI_RESET" >&2
+}
 # Third-party packages plus the ones published from pi-extensions / pi-supergrok-usage.
 # Local unpublished files still live in ai/extensions/pi/ and are linked below.
 PI_PACKAGES=(
@@ -29,29 +71,26 @@ run_step() {
   local name="$1"
   shift
 
-  echo
-  echo "==> $name"
+  ui_step "$name"
   if "$@"; then
-    echo "OK $name"
+    ui_success "OK $name"
     return 0
   fi
 
   local status=$?
-  echo "FAILED $name (exit $status). Re-run will skip anything already installed."
+  ui_error "FAILED $name (exit $status). Re-run will skip anything already installed."
   FAILED_STEPS+=("$name")
   return 0
 }
 
 finish_steps() {
   if ((${#FAILED_STEPS[@]} > 0)); then
-    echo
-    echo "Finished with failures: ${FAILED_STEPS[*]}"
-    echo "Re-run this script; completed installs will be skipped."
+    ui_error "Finished with failures: ${FAILED_STEPS[*]}"
+    ui_info "Re-run this script; completed installs will be skipped."
     return 1
   fi
 
-  echo
-  echo "Done"
+  ui_success "Done"
 }
 
 pi_has_package() {
@@ -110,7 +149,7 @@ link_file() {
 }
 
 setup_zshrc_local() {
-  echo "Setting up .zshrc.local for local API keys"
+  ui_step "Setting up .zshrc.local for local API keys"
 
   local zshrc_local="$HOME/.zshrc.local"
   if [[ ! -f "$zshrc_local" ]]; then
@@ -128,10 +167,10 @@ EOF
 # Optional $1 is a theme name. Empty keeps whatever theme is already set
 # (Omarchy writes omarchy-system via omarchy-theme-set-pi).
 configure_pi() {
-  echo "Configuring Pi"
+  ui_step "Configuring Pi"
 
   if ! command -v pi >/dev/null 2>&1; then
-    echo "Pi CLI not found; skipping Pi extension setup"
+    ui_warn "Pi CLI not found; skipping Pi extension setup"
     return
   fi
 
@@ -140,13 +179,13 @@ configure_pi() {
 
   for package in "${PI_PACKAGES[@]}"; do
     if pi_has_package "$package"; then
-      echo "Pi package already installed: $package"
+      ui_info "Pi package already installed: $package"
       continue
     fi
 
-    echo "Installing Pi package: $package"
+    ui_info "Installing Pi package: $package"
     if ! pi install "$package"; then
-      echo "Failed to install $package; continuing"
+      ui_warn "Failed to install $package; continuing"
     fi
   done
 
@@ -198,7 +237,7 @@ with open(settings_path, "w", encoding="utf-8") as f:
     f.write("\n")
 PY
   else
-    echo "python3 not found; skipping Pi settings.json update"
+    ui_warn "python3 not found; skipping Pi settings.json update"
   fi
 
   mkdir -p "$HOME/.pi/agent/agents"
@@ -226,22 +265,22 @@ PY
 
 # Oh My Pi (`omp`). Bun is preferred; the official installer is the fallback.
 install_omp() {
-  echo "Installing OMP"
+  ui_step "Installing OMP"
 
   export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
   export PATH="$BUN_INSTALL/bin:$HOME/.local/bin:$PATH"
 
   if have_cmd omp; then
-    echo "Already installed: omp"
+    ui_success "Already installed: omp"
     return 0
   fi
 
   if have_cmd bun; then
-    echo "Installing OMP with bun (@oh-my-pi/pi-coding-agent)"
+    ui_info "Installing OMP with bun (@oh-my-pi/pi-coding-agent)"
     if bun install -g @oh-my-pi/pi-coding-agent; then
       return 0
     fi
-    echo "bun install failed; falling back to omp.sh installer"
+    ui_warn "bun install failed; falling back to omp.sh installer"
   fi
 
   curl -fsSL https://omp.sh/install | sh
@@ -251,7 +290,7 @@ install_omp() {
 # User-wide OMP LSP config. JS and TS share typescript-language-server.
 # Turn time only renders on the token-usage row, so both flags are required.
 configure_omp() {
-  echo "Configuring OMP"
+  ui_step "Configuring OMP"
 
   mkdir -p "$HOME/.omp/agent"
   if [[ -f "$DOTFILES_DIR/omp/lsp.json" ]]; then
@@ -266,19 +305,19 @@ configure_omp() {
     omp config set statusLine.rightSegments '["session_name"]'
     omp config set statusLine.segmentOptions '{"model":{"showThinkingLevel":true},"path":{"abbreviate":true,"maxLength":40,"stripWorkPrefix":true},"git":{"showBranch":true,"showStaged":true,"showUnstaged":true,"showUntracked":true}}'
   else
-    echo "OMP CLI not found; skip OMP display settings"
+    ui_warn "OMP CLI not found; skip OMP display settings"
   fi
 }
 
 configure_codex() {
-  echo "Configuring Codex"
+  ui_step "Configuring Codex"
 
   if command -v codex >/dev/null 2>&1; then
     if ! codex mcp list 2>/dev/null | awk '{print $1}' | grep -qx "context7"; then
       codex mcp add context7 -- npx -y @upstash/context7-mcp
     fi
   else
-    echo "Codex CLI not found; skipping Context7 MCP setup"
+    ui_warn "Codex CLI not found; skipping Context7 MCP setup"
   fi
 
   if [[ -f "$DOTFILES_DIR/ai/codex/install-tui-status-line.sh" ]]; then
@@ -301,7 +340,7 @@ configure_codex() {
 }
 
 configure_claude() {
-  echo "Configuring Claude Code"
+  ui_step "Configuring Claude Code"
 
   mkdir -p "$HOME/.claude"
 
@@ -318,7 +357,7 @@ configure_claude() {
 }
 
 configure_zed() {
-  echo "Configuring Zed"
+  ui_step "Configuring Zed"
 
   local zed_config_dir="$HOME/.config/zed"
   local config_files=(settings.json keymap.json tasks.json debug.json)
@@ -340,13 +379,13 @@ configure_zed() {
   done
 
   if [[ -f "$DOTFILES_DIR/zed/auto-install-extensions.json" ]]; then
-    echo "Zed extensions are exported in zed/auto-install-extensions.json"
-    echo "Merge them into zed/settings.json under auto_install_extensions."
+    ui_info "Zed extensions are exported in zed/auto-install-extensions.json"
+    ui_info "Merge them into zed/settings.json under auto_install_extensions."
   fi
 }
 
 configure_ghostty() {
-  echo "Configuring Ghostty"
+  ui_step "Configuring Ghostty"
 
   if [[ -f "$DOTFILES_DIR/ghostty/config" ]]; then
     link_file "$DOTFILES_DIR/ghostty/config" "$HOME/.config/ghostty/config"
@@ -354,7 +393,7 @@ configure_ghostty() {
 }
 
 configure_herdr() {
-  echo "Configuring herdr"
+  ui_step "Configuring herdr"
 
   if [[ -f "$DOTFILES_DIR/herdr/config.toml" ]]; then
     link_file "$DOTFILES_DIR/herdr/config.toml" "$HOME/.config/herdr/config.toml"
@@ -421,7 +460,7 @@ cliamp_cookies_from() {
 
 # Copy the tracked cliamp config if needed, then fill in YouTube Music cookies.
 configure_cliamp() {
-  echo "Configuring cliamp (YouTube Music)"
+  ui_step "Configuring cliamp (YouTube Music)"
 
   local config_dir="$HOME/.config/cliamp"
   local config_file="$config_dir/config.toml"
@@ -509,10 +548,10 @@ PY
     else
       printf 'cookies_from = "%s"\n' "$cookies" >> "$config_file"
     fi
-    echo "YouTube Music cookies_from=$cookies"
+    ui_info "YouTube Music cookies_from=$cookies"
   fi
 
   if ! have_cmd yt-dlp; then
-    echo "yt-dlp is not on PATH. YouTube Music playback needs it."
+    ui_warn "yt-dlp is not on PATH. YouTube Music playback needs it."
   fi
 }

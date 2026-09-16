@@ -38,7 +38,7 @@ case "$ARCH" in
     NIX_SYSTEM="aarch64-linux"
     ;;
   *)
-    echo "Unsupported CPU architecture: $ARCH"
+    ui_error "Unsupported CPU architecture: $ARCH"
     exit 1
     ;;
 esac
@@ -63,7 +63,7 @@ parse_args() {
     case "$1" in
       --bettervim-license)
         if [[ $# -lt 2 ]]; then
-          echo "--bettervim-license requires a license value"
+          ui_error "--bettervim-license requires a license value"
           exit 1
         fi
         BETTERVIM_LICENSE="$2"
@@ -82,7 +82,7 @@ parse_args() {
         exit 0
         ;;
       *)
-        echo "Unknown option: $1"
+        ui_error "Unknown option: $1"
         usage
         exit 1
         ;;
@@ -101,9 +101,9 @@ require_nixos() {
     return
   fi
 
-  echo "This script is for NixOS. /etc/NIXOS was not found."
-  echo "Install NixOS first, then re-run."
-  echo "macOS: macos-setup.sh   Arch: linux-setup.sh   Omarchy: omarchy-setup.sh"
+  ui_error "This script is for NixOS. /etc/NIXOS was not found."
+  ui_info "Install NixOS first, then re-run."
+  ui_info "macOS: macos-setup.sh   Arch: linux-setup.sh   Omarchy: omarchy-setup.sh"
   exit 1
 }
 
@@ -159,7 +159,7 @@ write_nixos_dropin() {
     ${services_mod}"
   fi
 
-  echo "Writing $dropin"
+  ui_info "Writing $dropin"
   sudo tee "$dropin" >/dev/null <<EOF
 { pkgs, ... }:
 {
@@ -174,10 +174,10 @@ EOF
 }
 
 apply_nixos_system() {
-  echo "Applying NixOS system modules"
+  ui_step "Applying NixOS system modules"
 
   if ((REBUILD == 0)); then
-    echo "Skipping nixos-rebuild (--no-rebuild)"
+    ui_info "Skipping nixos-rebuild (--no-rebuild)"
     return 0
   fi
 
@@ -186,13 +186,13 @@ apply_nixos_system() {
   if [[ -f /etc/nixos/configuration.nix ]] &&
     ! grep -q 'dotfiles-imports.nix' /etc/nixos/configuration.nix; then
     if grep -q 'hardware-configuration.nix' /etc/nixos/configuration.nix; then
-      echo "Inserting ./dotfiles-imports.nix into /etc/nixos/configuration.nix"
+      ui_info "Inserting ./dotfiles-imports.nix into /etc/nixos/configuration.nix"
       sudo cp /etc/nixos/configuration.nix \
         "/etc/nixos/configuration.nix.bak.dotfiles.$(date +%Y%m%d%H%M%S)"
       sudo sed -i '/hardware-configuration.nix/a\    ./dotfiles-imports.nix' \
         /etc/nixos/configuration.nix
     else
-      echo "Add  ./dotfiles-imports.nix  to imports in /etc/nixos/configuration.nix"
+      ui_warn "Add ./dotfiles-imports.nix to imports in /etc/nixos/configuration.nix"
     fi
   fi
 
@@ -216,12 +216,12 @@ or:
 EOF
   fi
 
-  echo "Running nixos-rebuild switch"
+  ui_step "Running nixos-rebuild switch"
   sudo nixos-rebuild switch
 }
 
 install_home_manager() {
-  echo "Applying Home Manager flake (macos-setup app list)"
+  ui_step "Applying Home Manager flake (macos-setup app list)"
 
   export USER="${USER:-$(id -un)}"
   export HOME="${HOME:-$(eval echo "~$USER")}"
@@ -233,14 +233,14 @@ install_home_manager() {
   fi
 
   local flake="$DOTFILES_DIR/nix#dotfiles-${NIX_SYSTEM}"
-  echo "home-manager switch --impure --flake $flake"
+  ui_info "home-manager switch --impure --flake $flake"
 
   nix --extra-experimental-features "nix-command flakes" run home-manager -- \
     switch --impure --flake "$flake"
 }
 
 install_oh_my_zsh() {
-  echo "Installing zsh and Oh My Zsh"
+  ui_step "Installing zsh and Oh My Zsh"
 
   local zsh_path=""
   if have_cmd zsh; then
@@ -250,18 +250,18 @@ install_oh_my_zsh() {
   fi
 
   if [[ -z "$zsh_path" ]]; then
-    echo "zsh is not on PATH yet. Re-run after nixos-rebuild, or drop --no-rebuild."
+    ui_warn "zsh is not on PATH yet. Re-run after nixos-rebuild, or drop --no-rebuild."
     return 0
   fi
 
   if ! grep -qxF "$zsh_path" /etc/shells 2>/dev/null; then
-    echo "Adding zsh to /etc/shells"
+    ui_info "Adding zsh to /etc/shells"
     echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
   fi
 
   if [[ "${SHELL:-}" != "$zsh_path" ]]; then
-    echo "Setting zsh as the default shell"
-    chsh -s "$zsh_path" || echo "Could not change default shell; run: chsh -s $zsh_path"
+    ui_info "Setting zsh as the default shell"
+    chsh -s "$zsh_path" || ui_warn "Could not change default shell; run: chsh -s $zsh_path"
   fi
 
   if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
@@ -313,10 +313,10 @@ EOF
 }
 
 install_rust_components() {
-  echo "Configuring Rust (rustup from nixpkgs)"
+  ui_step "Configuring Rust (rustup from nixpkgs)"
 
   if ! have_cmd rustup; then
-    echo "rustup not on PATH yet; skip components until the next login"
+    ui_warn "rustup not on PATH yet; skip components until the next login"
     return 0
   fi
 
@@ -332,7 +332,7 @@ install_rust_components() {
   done
 
   if ((${#missing[@]} == 0)); then
-    echo "Already installed: rust + rustfmt/clippy/rust-analyzer"
+    ui_success "Already installed: rust + rustfmt/clippy/rust-analyzer"
     return 0
   fi
 
@@ -340,10 +340,10 @@ install_rust_components() {
 }
 
 setup_opam() {
-  echo "Configuring OCaml (opam + dune)"
+  ui_step "Configuring OCaml (opam + dune)"
 
   if ! have_cmd opam; then
-    echo "opam not found; skipping OCaml setup"
+    ui_warn "opam not found; skipping OCaml setup"
     return 0
   fi
 
@@ -353,7 +353,7 @@ setup_opam() {
   eval "$(opam env)"
 
   if have_cmd dune; then
-    echo "Already installed: dune"
+    ui_success "Already installed: dune"
     return 0
   fi
 
@@ -361,15 +361,15 @@ setup_opam() {
 }
 
 install_bettervim() {
-  echo "Installing bettervim"
+  ui_step "Installing bettervim"
 
   if bettervim_installed; then
-    echo "Already installed: bettervim"
+    ui_success "Already installed: bettervim"
     return 0
   fi
 
   if [[ -z "$BETTERVIM_LICENSE" ]]; then
-    echo "bettervim license is missing. Pass --bettervim-license LICENSE to this script."
+    ui_error "bettervim license is missing. Pass --bettervim-license LICENSE to this script."
     return 1
   fi
 
@@ -378,10 +378,10 @@ install_bettervim() {
 }
 
 install_global_bun_packages() {
-  echo "Installing global Bun packages"
+  ui_step "Installing global Bun packages"
 
   if ! have_cmd bun; then
-    echo "bun not on PATH yet; skip global packages until the next login"
+    ui_warn "bun not on PATH yet; skip global packages until the next login"
     return 0
   fi
 
@@ -389,17 +389,17 @@ install_global_bun_packages() {
 }
 
 install_helium() {
-  echo "Installing Helium browser"
+  ui_step "Installing Helium browser"
 
   if [[ -x "$HOME/Applications/helium.AppImage" ]]; then
-    echo "Already installed: Helium AppImage"
+    ui_success "Already installed: Helium AppImage"
     return 0
   fi
 
   local url
   url="$(gh_asset_url imputnet/helium-linux "${HELIUM_ARCH}\.AppImage$")" || true
   if [[ -z "$url" ]]; then
-    echo "Could not resolve a Helium AppImage for $HELIUM_ARCH; skipping"
+    ui_warn "Could not resolve a Helium AppImage for $HELIUM_ARCH; skipping"
     return 0
   fi
 
@@ -446,14 +446,14 @@ EOF
 parse_args "$@"
 
 if [[ -z "$BETTERVIM_LICENSE" ]] && ! bettervim_installed; then
-  echo "Missing required option: --bettervim-license LICENSE"
+  ui_error "Missing required option: --bettervim-license LICENSE"
   usage
   exit 1
 fi
 
 require_nixos
 
-echo "Here we go again!"
+ui_title "Here we go again!"
 
 run_step "nixos-system" apply_nixos_system
 run_step "home-manager" install_home_manager

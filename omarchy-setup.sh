@@ -39,7 +39,7 @@ parse_args() {
     case "$1" in
       --bettervim-license)
         if [[ $# -lt 2 ]]; then
-          echo "--bettervim-license requires a license value"
+          ui_error "--bettervim-license requires a license value"
           exit 1
         fi
         BETTERVIM_LICENSE="$2"
@@ -50,7 +50,7 @@ parse_args() {
         exit 0
         ;;
       *)
-        echo "Unknown option: $1"
+        ui_error "Unknown option: $1"
         usage
         exit 1
         ;;
@@ -63,8 +63,8 @@ require_omarchy() {
     return
   fi
 
-  echo "This script is for Omarchy. /usr/share/omarchy was not found."
-  echo "Use linux-setup.sh on a generic Linux box."
+  ui_error "This script is for Omarchy. /usr/share/omarchy was not found."
+  ui_info "Use linux-setup.sh on a generic Linux box."
   exit 1
 }
 
@@ -77,7 +77,7 @@ ensure_yay() {
     return
   fi
 
-  echo "Bootstrapping yay (AUR helper)"
+  ui_step "Bootstrapping yay (AUR helper)"
   sudo pacman -S --needed --noconfirm git base-devel
 
   local tmp
@@ -113,17 +113,17 @@ mark_bettervim_installed() {
 
 ensure_pi() {
   if have_cmd pi; then
-    echo "Pi is already installed (Omarchy ships it via mise)"
+    ui_success "Pi is already installed (Omarchy ships it via mise)"
     return
   fi
 
-  echo "Pi is missing; installing with mise"
+  ui_step "Pi is missing; installing with mise"
   if command -v mise >/dev/null 2>&1; then
     mise use -g pi
     return
   fi
 
-  echo "mise not found; installing Pi with bun"
+  ui_info "mise not found; installing Pi with bun"
   if ! command -v bun >/dev/null 2>&1; then
     curl -fsSL https://bun.sh/install | bash
     export PATH="$HOME/.bun/bin:$PATH"
@@ -132,7 +132,7 @@ ensure_pi() {
 }
 
 install_gap_packages() {
-  echo "Installing packages Omarchy does not ship"
+  ui_step "Installing packages Omarchy does not ship"
 
   # yazi is not in omarchy-base.packages. ffmpeg/7zip/poppler/resvg are
   # the extras it wants; fd/fzf/ripgrep/zoxide/imagemagick are already there.
@@ -140,7 +140,7 @@ install_gap_packages() {
   pac yazi ffmpeg 7zip poppler resvg gopls jdtls typescript-language-server
 
   if have_cmd bitwarden || pacman -Q bitwarden >/dev/null 2>&1; then
-    echo "Already installed: bitwarden"
+    ui_success "Already installed: bitwarden"
     return 0
   fi
 
@@ -148,7 +148,7 @@ install_gap_packages() {
 }
 
 install_fonts() {
-  echo "Installing Space Mono Nerd Font"
+  ui_step "Installing Space Mono Nerd Font"
 
   local fonts_dir="$HOME/.local/share/fonts"
   mkdir -p "$fonts_dir"
@@ -157,7 +157,7 @@ install_fonts() {
   local existing=("$fonts_dir"/SpaceMonoNerdFont*.ttf "$fonts_dir"/SpaceMonoNerdFont*.otf)
   shopt -u nullglob
   if ((${#existing[@]} > 0)); then
-    echo "Already installed: Space Mono Nerd Font"
+    ui_success "Already installed: Space Mono Nerd Font"
     return 0
   fi
 
@@ -166,7 +166,7 @@ install_fonts() {
   if curl -fL "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/SpaceMono.zip" -o "$tmp/font.zip"; then
     unzip -q -o "$tmp/font.zip" -d "$fonts_dir" -x "*.md" "LICENSE*" || true
   else
-    echo "Could not download SpaceMono Nerd Font; skipping"
+    ui_warn "Could not download SpaceMono Nerd Font; skipping"
   fi
   rm -rf "$tmp"
 
@@ -176,7 +176,7 @@ install_fonts() {
 }
 
 install_oh_my_zsh() {
-  echo "Installing zsh and Oh My Zsh"
+  ui_step "Installing zsh and Oh My Zsh"
 
   pac zsh
 
@@ -184,13 +184,13 @@ install_oh_my_zsh() {
   zsh_path="$(command -v zsh)"
 
   if [[ -n "$zsh_path" ]] && ! grep -qxF "$zsh_path" /etc/shells; then
-    echo "Adding zsh to /etc/shells"
+    ui_info "Adding zsh to /etc/shells"
     echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
   fi
 
   if [[ "${SHELL:-}" != "$zsh_path" ]]; then
-    echo "Setting zsh as the default shell"
-    chsh -s "$zsh_path" || echo "Could not change default shell automatically; run: chsh -s $zsh_path"
+    ui_info "Setting zsh as the default shell"
+    chsh -s "$zsh_path" || ui_warn "Could not change default shell automatically; run: chsh -s $zsh_path"
   fi
 
   if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
@@ -229,10 +229,10 @@ EOF
 }
 
 install_bun() {
-  echo "Installing Bun"
+  ui_step "Installing Bun"
 
   if have_cmd bun; then
-    echo "Already installed: bun"
+    ui_success "Already installed: bun"
     return 0
   fi
 
@@ -246,7 +246,7 @@ install_bun() {
 }
 
 install_rust() {
-  echo "Installing Rust"
+  ui_step "Installing Rust"
 
   if ! have_cmd rustup; then
     if have_cmd omarchy-install-dev-env; then
@@ -259,7 +259,7 @@ install_rust() {
   fi
 
   if ! have_cmd rustup; then
-    echo "rustup not available after install"
+    ui_error "rustup not available after install"
     return 1
   fi
 
@@ -275,7 +275,7 @@ install_rust() {
   done
 
   if ((${#missing[@]} == 0)); then
-    echo "Already installed: rust + rustfmt/clippy/rust-analyzer"
+    ui_success "Already installed: rust + rustfmt/clippy/rust-analyzer"
     return 0
   fi
 
@@ -283,7 +283,7 @@ install_rust() {
 }
 
 install_java_kotlin() {
-  echo "Installing Java and Kotlin (via SDKMAN)"
+  ui_step "Installing Java and Kotlin (via SDKMAN)"
 
   export SDKMAN_DIR="$HOME/.sdkman"
   if [[ ! -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
@@ -295,29 +295,29 @@ install_java_kotlin() {
   . "$SDKMAN_DIR/bin/sdkman-init.sh"
 
   if [[ -d "$SDKMAN_DIR/candidates/java/current" ]] || have_cmd java; then
-    echo "Already installed: java"
+    ui_success "Already installed: java"
   else
-    sdk install java || echo "java install skipped"
+    sdk install java || ui_warn "java install skipped"
   fi
 
   if [[ -d "$SDKMAN_DIR/candidates/kotlin/current" ]] || have_cmd kotlinc; then
-    echo "Already installed: kotlin"
+    ui_success "Already installed: kotlin"
   else
-    sdk install kotlin || echo "kotlin install skipped"
+    sdk install kotlin || ui_warn "kotlin install skipped"
   fi
 
   if [[ -d "$SDKMAN_DIR/candidates/gradle/current" ]] || have_cmd gradle; then
-    echo "Already installed: gradle"
+    ui_success "Already installed: gradle"
   else
-    sdk install gradle || echo "gradle install skipped"
+    sdk install gradle || ui_warn "gradle install skipped"
   fi
   set -u
 }
 
 install_pnpm() {
-  echo "Installing pnpm"
+  ui_step "Installing pnpm"
   if have_cmd pnpm; then
-    echo "Already installed: pnpm"
+    ui_success "Already installed: pnpm"
     return 0
   fi
 
@@ -325,9 +325,9 @@ install_pnpm() {
 }
 
 install_turso() {
-  echo "Installing Turso CLI"
+  ui_step "Installing Turso CLI"
   if have_cmd turso; then
-    echo "Already installed: turso"
+    ui_success "Already installed: turso"
     return 0
   fi
 
@@ -335,16 +335,16 @@ install_turso() {
 }
 
 install_cliamp() {
-  echo "Installing cliamp"
+  ui_step "Installing cliamp"
 
   if have_cmd cliamp; then
-    echo "Already installed: cliamp"
+    ui_success "Already installed: cliamp"
   else
     aur cliamp
   fi
 
   if have_cmd yt-dlp; then
-    echo "Already installed: yt-dlp"
+    ui_success "Already installed: yt-dlp"
   else
     pac yt-dlp
   fi
@@ -355,9 +355,9 @@ install_cliamp() {
 }
 
 install_watchman() {
-  echo "Installing watchman"
+  ui_step "Installing watchman"
   if have_cmd watchman; then
-    echo "Already installed: watchman"
+    ui_success "Already installed: watchman"
     return 0
   fi
 
@@ -365,9 +365,9 @@ install_watchman() {
 }
 
 install_go() {
-  echo "Installing Go"
+  ui_step "Installing Go"
   if have_cmd go; then
-    echo "Already installed: go"
+    ui_success "Already installed: go"
     return 0
   fi
 
@@ -380,13 +380,13 @@ install_go() {
 }
 
 setup_opam() {
-  echo "Configuring OCaml (opam + dune)"
+  ui_step "Configuring OCaml (opam + dune)"
 
   if ! have_cmd opam; then
     if have_cmd omarchy-install-dev-env; then
       omarchy-install-dev-env ocaml
     else
-      echo "opam not found; skipping OCaml setup"
+      ui_warn "opam not found; skipping OCaml setup"
       return 0
     fi
   fi
@@ -397,7 +397,7 @@ setup_opam() {
   eval "$(opam env)"
 
   if have_cmd dune; then
-    echo "Already installed: dune"
+    ui_success "Already installed: dune"
     return 0
   fi
 
@@ -405,15 +405,15 @@ setup_opam() {
 }
 
 install_bettervim() {
-  echo "Installing bettervim"
+  ui_step "Installing bettervim"
 
   if bettervim_installed; then
-    echo "Already installed: bettervim"
+    ui_success "Already installed: bettervim"
     return 0
   fi
 
   if [[ -z "$BETTERVIM_LICENSE" ]]; then
-    echo "bettervim license is missing. Pass --bettervim-license LICENSE to this script."
+    ui_error "bettervim license is missing. Pass --bettervim-license LICENSE to this script."
     return 1
   fi
 
@@ -422,15 +422,15 @@ install_bettervim() {
 }
 
 install_android_studio() {
-  echo "Installing Android Studio"
+  ui_step "Installing Android Studio"
   if have_cmd android-studio; then
-    echo "Already installed: android-studio"
+    ui_success "Already installed: android-studio"
   else
     aur android-studio
   fi
 
   if pacman -Q android-tools >/dev/null 2>&1; then
-    echo "Already installed: android-tools"
+    ui_success "Already installed: android-tools"
     return 0
   fi
 
@@ -438,10 +438,10 @@ install_android_studio() {
 }
 
 install_ghostty() {
-  echo "Installing Ghostty"
+  ui_step "Installing Ghostty"
 
   if have_cmd ghostty; then
-    echo "Already installed: ghostty"
+    ui_success "Already installed: ghostty"
     return 0
   fi
 
@@ -454,10 +454,10 @@ install_ghostty() {
 }
 
 install_zed() {
-  echo "Installing Zed"
+  ui_step "Installing Zed"
 
   if have_cmd zed || pacman -Q zed >/dev/null 2>&1; then
-    echo "Already installed: zed"
+    ui_success "Already installed: zed"
     return 0
   fi
 
@@ -470,10 +470,10 @@ install_zed() {
 }
 
 install_tailscale() {
-  echo "Installing Tailscale"
+  ui_step "Installing Tailscale"
 
   if have_cmd tailscale; then
-    echo "Already installed: tailscale"
+    ui_success "Already installed: tailscale"
   elif have_cmd omarchy-pkg-add; then
     omarchy-pkg-add tailscale
   else
@@ -482,19 +482,19 @@ install_tailscale() {
 
   if systemctl is-enabled --quiet tailscaled.service 2>/dev/null &&
     systemctl is-active --quiet tailscaled.service 2>/dev/null; then
-    echo "Already enabled: tailscaled"
+    ui_success "Already enabled: tailscaled"
     return 0
   fi
 
   sudo systemctl enable --now tailscaled.service ||
-    echo "Could not enable tailscaled.service; enable it manually with: sudo systemctl enable --now tailscaled"
+    ui_warn "Could not enable tailscaled.service; enable it manually with: sudo systemctl enable --now tailscaled"
 }
 
 set_catppuccin_theme() {
-  echo "Setting Omarchy theme to built-in Catppuccin dark"
+  ui_step "Setting Omarchy theme to built-in Catppuccin dark"
 
   if ! have_cmd omarchy-theme-set; then
-    echo "omarchy-theme-set not found; skipping theme"
+    ui_warn "omarchy-theme-set not found; skipping theme"
     return 0
   fi
 
@@ -503,7 +503,7 @@ set_catppuccin_theme() {
     current="$(<"$HOME/.local/state/omarchy/current/theme.name")"
   fi
   if [[ "$current" == "catppuccin" ]]; then
-    echo "Already set: catppuccin"
+    ui_success "Already set: catppuccin"
     return 0
   fi
 
@@ -553,7 +553,7 @@ EOF
 parse_args "$@"
 
 if [[ -z "$BETTERVIM_LICENSE" ]] && ! bettervim_installed; then
-  echo "Missing required option: --bettervim-license LICENSE"
+  ui_error "Missing required option: --bettervim-license LICENSE"
   usage
   exit 1
 fi
@@ -561,7 +561,7 @@ fi
 require_omarchy
 activate_omarchy_path
 
-echo "Here we go again!"
+ui_title "Here we go again!"
 
 run_step "gap-packages" install_gap_packages
 run_step "fonts" install_fonts

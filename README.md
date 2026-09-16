@@ -73,6 +73,8 @@ cd ~/.dotfiles
 
 Arguments after the target are passed to that platform's setup script.
 
+Setup scripts display colored status messages and ANSI icons in interactive terminals. Set `NO_COLOR=1` to disable colors.
+
 ## macOS
 
 `macos-setup.sh` installs a complete development workstation:

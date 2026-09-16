@@ -19,7 +19,7 @@ case "$ARCH" in
   x86_64 | amd64) HELIUM_ARCH="x86_64" ;;
   aarch64 | arm64) HELIUM_ARCH="arm64" ;;
   *)
-    echo "Unsupported CPU architecture: $ARCH"
+    ui_error "Unsupported CPU architecture: $ARCH"
     exit 1
     ;;
 esac
@@ -39,7 +39,7 @@ parse_args() {
     case "$1" in
       --bettervim-license)
         if [[ $# -lt 2 ]]; then
-          echo "--bettervim-license requires a license value"
+          ui_error "--bettervim-license requires a license value"
           exit 1
         fi
         BETTERVIM_LICENSE="$2"
@@ -50,7 +50,7 @@ parse_args() {
         exit 0
         ;;
       *)
-        echo "Unknown option: $1"
+        ui_error "Unknown option: $1"
         usage
         exit 1
         ;;
@@ -77,7 +77,7 @@ ensure_yay() {
     return
   fi
 
-  echo "Bootstrapping yay (AUR helper)"
+  ui_step "Bootstrapping yay (AUR helper)"
   sudo pacman -S --needed --noconfirm git base-devel
 
   local tmp
@@ -115,7 +115,7 @@ EOF
 }
 
 install_base_packages() {
-  echo "Installing base packages"
+  ui_step "Installing base packages"
 
   sudo pacman -Syu --noconfirm
   pac base-devel git curl wget file gnupg unzip zip openssl pkgconf fuse2 \
@@ -124,7 +124,7 @@ install_base_packages() {
 }
 
 install_fonts() {
-  echo "Installing fonts (Space Mono + Symbols Only Nerd Font)"
+  ui_step "Installing fonts (Space Mono + Symbols Only Nerd Font)"
 
   pac ttf-nerd-fonts-symbols
 
@@ -137,7 +137,7 @@ install_fonts() {
   if curl -fL "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/SpaceMono.zip" -o "$tmp/font.zip"; then
     unzip -q -o "$tmp/font.zip" -d "$fonts_dir" -x "*.md" "LICENSE*" || true
   else
-    echo "Could not download SpaceMono Nerd Font; skipping"
+    ui_warn "Could not download SpaceMono Nerd Font; skipping"
   fi
   rm -rf "$tmp"
 
@@ -147,7 +147,7 @@ install_fonts() {
 }
 
 install_oh_my_zsh() {
-  echo "Installing zsh and Oh My Zsh"
+  ui_step "Installing zsh and Oh My Zsh"
 
   pac zsh
 
@@ -155,13 +155,13 @@ install_oh_my_zsh() {
   zsh_path="$(command -v zsh)"
 
   if [[ -n "$zsh_path" ]] && ! grep -qxF "$zsh_path" /etc/shells; then
-    echo "Adding zsh to /etc/shells"
+    ui_info "Adding zsh to /etc/shells"
     echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
   fi
 
   if [[ "${SHELL:-}" != "$zsh_path" ]]; then
-    echo "Setting zsh as the default shell"
-    chsh -s "$zsh_path" || echo "Could not change default shell automatically; run: chsh -s $zsh_path"
+    ui_info "Setting zsh as the default shell"
+    chsh -s "$zsh_path" || ui_warn "Could not change default shell automatically; run: chsh -s $zsh_path"
   fi
 
   if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
@@ -186,7 +186,7 @@ install_oh_my_zsh() {
 }
 
 install_nvm() {
-  echo "Installing nvm"
+  ui_step "Installing nvm"
 
   if [[ ! -s "$HOME/.nvm/nvm.sh" ]]; then
     PROFILE=/dev/null bash -c \
@@ -203,7 +203,7 @@ install_nvm() {
 }
 
 install_bun() {
-  echo "Installing Bun"
+  ui_step "Installing Bun"
 
   if ! command -v bun >/dev/null 2>&1; then
     curl -fsSL https://bun.sh/install | bash
@@ -212,7 +212,7 @@ install_bun() {
 }
 
 install_herdr() {
-  echo "Installing herdr"
+  ui_step "Installing herdr"
 
   if ! command -v herdr >/dev/null 2>&1; then
     curl -fsSL https://herdr.dev/install.sh | sh
@@ -220,7 +220,7 @@ install_herdr() {
 }
 
 install_rust() {
-  echo "Installing Rust"
+  ui_step "Installing Rust"
 
   pac rustup
   export PATH="$HOME/.cargo/bin:$PATH"
@@ -230,7 +230,7 @@ install_rust() {
 }
 
 install_java_kotlin() {
-  echo "Installing Java and Kotlin (via SDKMAN)"
+  ui_step "Installing Java and Kotlin (via SDKMAN)"
 
   export SDKMAN_DIR="$HOME/.sdkman"
   if [[ ! -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
@@ -248,21 +248,21 @@ install_java_kotlin() {
 }
 
 install_pnpm() {
-  echo "Installing pnpm"
+  ui_step "Installing pnpm"
   if ! command -v pnpm >/dev/null 2>&1; then
     curl -fsSL https://get.pnpm.io/install.sh | sh -
   fi
 }
 
 install_turso() {
-  echo "Installing Turso CLI"
+  ui_step "Installing Turso CLI"
   if ! command -v turso >/dev/null 2>&1; then
     curl -sSfL https://get.tur.so/install.sh | bash
   fi
 }
 
 install_cliamp() {
-  echo "Installing cliamp"
+  ui_step "Installing cliamp"
 
   if ! command -v cliamp >/dev/null 2>&1; then
     aur cliamp
@@ -276,17 +276,17 @@ install_cliamp() {
 }
 
 install_watchman() {
-  echo "Installing watchman"
+  ui_step "Installing watchman"
   if ! command -v watchman >/dev/null 2>&1; then
     aur watchman-bin
   fi
 }
 
 setup_opam() {
-  echo "Configuring OCaml (opam + dune)"
+  ui_step "Configuring OCaml (opam + dune)"
 
   if ! command -v opam >/dev/null 2>&1; then
-    echo "opam not found; skipping OCaml setup"
+    ui_warn "opam not found; skipping OCaml setup"
     return
   fi
 
@@ -298,25 +298,25 @@ setup_opam() {
 }
 
 install_docker() {
-  echo "Installing Docker Engine"
+  ui_step "Installing Docker Engine"
 
   pac docker docker-compose docker-buildx
 
   sudo systemctl enable --now docker.service ||
-    echo "Could not enable docker.service; enable it manually with: sudo systemctl enable --now docker"
+    ui_warn "Could not enable docker.service; enable it manually with: sudo systemctl enable --now docker"
 
   if ! getent group docker >/dev/null 2>&1; then
     sudo groupadd docker || true
   fi
   sudo usermod -aG docker "$USER" || true
-  echo "Added $USER to the docker group. Log out and back in for it to take effect."
+  ui_info "Added $USER to the docker group. Log out and back in for it to take effect."
 }
 
 install_bettervim() {
-  echo "Installing bettervim"
+  ui_step "Installing bettervim"
 
   if [[ -z "$BETTERVIM_LICENSE" ]]; then
-    echo "bettervim license is missing. Pass --bettervim-license LICENSE to this script."
+    ui_error "bettervim license is missing. Pass --bettervim-license LICENSE to this script."
     exit 1
   fi
 
@@ -324,38 +324,38 @@ install_bettervim() {
 }
 
 install_global_bun_packages() {
-  echo "Installing global Bun packages"
+  ui_step "Installing global Bun packages"
 
   export PATH="$HOME/.bun/bin:$PATH"
   bun add -g @earendil-works/pi-coding-agent opencode-ai
 }
 
 install_desktop_apps() {
-  echo "Installing desktop apps"
+  ui_step "Installing desktop apps"
   # Ghostty per request: pacman -S ghostty. Zed, Bitwarden and Discord are all
   # in the official repos too.
   pac ghostty zed bitwarden discord
 }
 
 install_android_studio() {
-  echo "Installing Android Studio"
+  ui_step "Installing Android Studio"
   if ! command -v android-studio >/dev/null 2>&1; then
     aur android-studio
   fi
 }
 
 install_handy() {
-  echo "Installing Handy"
+  ui_step "Installing Handy"
   aur handy-bin
 }
 
 install_helium() {
-  echo "Installing Helium browser"
+  ui_step "Installing Helium browser"
 
   local url
   url="$(gh_asset_url imputnet/helium-linux "${HELIUM_ARCH}\.AppImage$")" || true
   if [[ -z "$url" ]]; then
-    echo "Could not resolve a Helium AppImage for $HELIUM_ARCH; skipping"
+    ui_warn "Could not resolve a Helium AppImage for $HELIUM_ARCH; skipping"
     return
   fi
 
@@ -363,11 +363,11 @@ install_helium() {
 }
 
 install_tailscale() {
-  echo "Installing Tailscale"
+  ui_step "Installing Tailscale"
 
   pac tailscale
   sudo systemctl enable --now tailscaled.service ||
-    echo "Could not enable tailscaled.service; enable it manually with: sudo systemctl enable --now tailscaled"
+    ui_warn "Could not enable tailscaled.service; enable it manually with: sudo systemctl enable --now tailscaled"
 }
 
 print_notes() {
@@ -392,12 +392,12 @@ EOF
 parse_args "$@"
 
 if [[ -z "$BETTERVIM_LICENSE" ]]; then
-  echo "Missing required option: --bettervim-license LICENSE"
+  ui_error "Missing required option: --bettervim-license LICENSE"
   usage
   exit 1
 fi
 
-echo "Here we go again!"
+ui_title "Here we go again!"
 
 install_base_packages
 install_fonts
@@ -409,7 +409,7 @@ install_herdr
 install_rust
 install_java_kotlin
 
-echo "Installing CLIs"
+ui_step "Installing CLIs"
 install_pnpm
 install_turso
 install_cliamp
@@ -426,7 +426,7 @@ configure_pi amp-dark
 configure_claude
 configure_omp
 
-echo "Installing apps"
+ui_step "Installing apps"
 install_desktop_apps
 install_android_studio
 install_handy
@@ -440,4 +440,4 @@ configure_cliamp
 
 print_notes
 
-echo "Done"
+ui_success "Done"
