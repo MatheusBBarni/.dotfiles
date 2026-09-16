@@ -39,7 +39,7 @@ Cross-platform shell, editor, terminal, and workstation setup for macOS, Arch Li
 | NixOS | An existing NixOS installation with flakes enabled or available |
 | Windows | Windows 10/11 64-bit and WinGet/App Installer |
 
-The macOS and Linux scripts require a bettervim license. Omarchy and NixOS require it only when bettervim is not already installed.
+The Linux script requires a bettervim license. macOS skips bettervim unless `--bettervim-license` is provided; Omarchy and NixOS require it only when bettervim is not already installed.
 
 > [!WARNING]
 > Setup scripts install packages, change shell/configuration files, and download installers from upstream projects. Review the script for your platform before running it on a machine with existing configuration.
@@ -79,7 +79,7 @@ Arguments after the target are passed to that platform's setup script.
 
 - Homebrew, CLI utilities, zsh, Oh My Zsh, and shell plugins
 - Node.js 24 through nvm, Bun, pnpm, Rust, Java/Kotlin, Go, OCaml, and Docker
-- bettervim, OMP, Pi packages, Codex and Claude Code configuration
+- optional bettervim, OMP, Pi packages, Codex and Claude Code configuration
 - Google Chrome, Zed, Ghostty, Helium, Bitwarden, Discord, Tailscale, Android Studio, Handy, and other desktop apps
 - Fonts, Dock entries, CLIAMP, and tracked configuration files
 
@@ -87,12 +87,15 @@ Arguments after the target are passed to that platform's setup script.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/bootstrap.sh \
-  | bash -s -- mac --bettervim-license YOUR_LICENSE_KEY
+  | bash -s -- mac
 ```
 
 ### macOS from a clone
 
 ```bash
+./macos-setup.sh
+
+# Optional:
 ./macos-setup.sh --bettervim-license YOUR_LICENSE_KEY
 ```
 
@@ -100,7 +103,7 @@ curl -fsSL https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/boot
 
 | Flag | Description |
 | --- | --- |
-| `--bettervim-license LICENSE` | bettervim license key; required |
+| `--bettervim-license LICENSE` | Optional bettervim license key; omitted to skip bettervim |
 | `-h`, `--help` | Show setup help |
 
 Xcode is installed when the Mac App Store is signed in. The script skips it and prints a note otherwise.

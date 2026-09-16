@@ -22,7 +22,7 @@ usage() {
 Usage: $0 [options]
 
 Options:
-  --bettervim-license LICENSE  License key for bettervim installation (required)
+  --bettervim-license LICENSE  Optional license key for bettervim installation
   -h, --help                   Show this help
 EOF
 }
@@ -153,6 +153,9 @@ install_nvm() {
 install_bun() {
   echo "Installing Bun"
 
+  export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+  export PATH="$BUN_INSTALL/bin:$HOME/.local/bin:$PATH"
+
   if ! command -v bun >/dev/null 2>&1; then
     curl -fsSL https://bun.sh/install | bash
   fi
@@ -160,6 +163,8 @@ install_bun() {
 
 install_herdr() {
   echo "Installing herdr"
+
+  export PATH="$HOME/.local/bin:$PATH"
 
   if ! command -v herdr >/dev/null 2>&1; then
     curl -fsSL https://herdr.dev/install.sh | sh
@@ -198,26 +203,68 @@ install_cliamp() {
   brew install bjarneo/cliamp/cliamp yt-dlp
 }
 
+install_global_bun_packages() {
+  echo "Installing global Bun packages"
+
+  if ! command -v bun >/dev/null 2>&1; then
+    echo "Bun not found; skipping global packages"
+    return 0
+  fi
+
+  if command -v pi >/dev/null 2>&1; then
+    echo "Already installed: pi"
+  else
+    bun add -g @earendil-works/pi-coding-agent
+  fi
+
+  if command -v opencode >/dev/null 2>&1; then
+    echo "Already installed: opencode"
+  else
+    bun add -g opencode-ai
+  fi
+}
+
+bettervim_installed() {
+  [[ -d "$HOME/.config/better-vim" ]] ||
+    [[ -d "$HOME/.better-vim" ]] ||
+    [[ -f "$HOME/.local/state/dotfiles/bettervim.installed" ]]
+}
+
+mark_bettervim_installed() {
+  mkdir -p "$HOME/.local/state/dotfiles"
+  touch "$HOME/.local/state/dotfiles/bettervim.installed"
+}
+
 install_bettervim() {
   echo "Installing bettervim"
 
-  if [[ -z "$BETTERVIM_LICENSE" ]]; then
-    echo "bettervim license is missing. Pass --bettervim-license LICENSE to this script."
-    exit 1
+  if bettervim_installed; then
+    echo "Already installed: bettervim"
+    return 0
   fi
 
-  curl -L "https://bettervim.com/install/$BETTERVIM_LICENSE" | bash
+  if [[ -z "$BETTERVIM_LICENSE" ]]; then
+    echo "bettervim license not provided; skipping"
+    return 0
+  fi
+
+  curl -fsSL "https://bettervim.com/install/$BETTERVIM_LICENSE" | bash
+  mark_bettervim_installed
 }
 
 install_java_kotlin() {
   echo "Installing Java and Kotlin"
-
   brew install --cask temurin
   brew install kotlin gradle
 }
 
 install_handy() {
   echo "Installing Handy"
+
+  if [[ -d "/Applications/Handy.app" ]]; then
+    echo "Already installed: Handy"
+    return 0
+  fi
 
   local handy_arch
   if [[ "$(uname -m)" == "arm64" ]]; then
@@ -253,7 +300,6 @@ install_handy() {
     return 1
   fi
 
-  sudo rm -rf "/Applications/Handy.app"
   sudo ditto "$app_path" "/Applications/Handy.app"
   hdiutil detach "$mount_point" -quiet
   rm -rf "$mount_point" "$tmp_dmg"
@@ -280,14 +326,7 @@ install_xcode() {
     sudo xcodebuild -runFirstLaunch
   fi
 }
-
 parse_args "$@"
-
-if [[ -z "$BETTERVIM_LICENSE" ]]; then
-  echo "Missing required option: --bettervim-license LICENSE"
-  usage
-  exit 1
-fi
 
 echo "Here we go again!"
 
@@ -306,9 +345,7 @@ brew install node pnpm gh neovim watchman go gopls jdtls typescript-language-ser
 install_cliamp
 install_bettervim
 install_fonts
-
-echo "Installing global Bun packages"
-bun add -g @earendil-works/pi-coding-agent opencode-ai
+install_global_bun_packages
 install_omp
 configure_codex
 configure_pi amp-dark
