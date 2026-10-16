@@ -288,7 +288,8 @@ Useful follow-up actions:
 | `nix/` | Nix flake, Home Manager, Hyprland, and NixOS modules |
 | `zed/` | Zed settings, keymap, themes, snippets, and export tools |
 | `ghostty/` | Ghostty config, themes, and icons |
-| `herdr/` | Herdr config and OMP integration |
+| `herdr/` | Herdr config, Reviewr plugin theme, and OMP integration |
+| `zsh/` | Custom Oh My Zsh themes installed by setup scripts |
 | `cliamp/` | CLIAMP YouTube Music configuration template |
 | `vscode/` | VS Code settings and extension installer |
 | `better-vim/` | Neovim Lua configuration and plugin files |

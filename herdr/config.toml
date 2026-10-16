@@ -37,7 +37,7 @@ allow_nested = true
 pane_history = false
 
 [theme]
-name = "catppuccin"
+name = "rose-pine-dawn"
 
 [ui.sound]
 enabled = true

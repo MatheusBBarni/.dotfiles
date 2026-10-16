@@ -2,7 +2,7 @@ export ZSH="$HOME/.oh-my-zsh"
 export EDITOR="nvim"
 
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="candy"
+ZSH_THEME="candy-light"
 
 # CASE_SENSITIVE="true"
 

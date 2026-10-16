@@ -384,11 +384,23 @@ configure_zed() {
   fi
 }
 
+configure_zsh_theme() {
+  local custom_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+  local theme_file="$DOTFILES_DIR/zsh/candy-light.zsh-theme"
+
+  if [[ -f "$theme_file" ]]; then
+    link_file "$theme_file" "$custom_dir/themes/candy-light.zsh-theme"
+  fi
+}
+
 configure_ghostty() {
   ui_step "Configuring Ghostty"
 
   if [[ -f "$DOTFILES_DIR/ghostty/config" ]]; then
     link_file "$DOTFILES_DIR/ghostty/config" "$HOME/.config/ghostty/config"
+  fi
+  if [[ -f "$DOTFILES_DIR/ghostty/ghostty-original" ]]; then
+    link_file "$DOTFILES_DIR/ghostty/ghostty-original" "$HOME/.config/ghostty/ghostty-original"
   fi
 }
 
@@ -397,6 +409,10 @@ configure_herdr() {
 
   if [[ -f "$DOTFILES_DIR/herdr/config.toml" ]]; then
     link_file "$DOTFILES_DIR/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+  fi
+  local reviewr_config="$DOTFILES_DIR/herdr/plugins/config/persiyanov.reviewr/config.toml"
+  if [[ -f "$reviewr_config" ]]; then
+    link_file "$reviewr_config" "$HOME/.config/herdr/plugins/config/persiyanov.reviewr/config.toml"
   fi
 
   if [[ -f "$DOTFILES_DIR/herdr/move-space.py" ]]; then
