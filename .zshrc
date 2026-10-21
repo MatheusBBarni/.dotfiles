@@ -97,6 +97,7 @@ alias ddac='docker rm -f $(docker ps -a -q)'
 alias dsal='docker kill $(docker ps -q)'
 
 alias k='kubectl'
+alias kget='kubectl get'
 alias tf='terraform'
 
 # NVM
