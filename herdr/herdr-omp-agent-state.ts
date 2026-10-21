@@ -1,7 +1,8 @@
-// Patched overlay from this repo. configure_herdr installs the Herdr OMP
-// integration, then replaces the bundled hook with this file.
+// installed by herdr
+// managed by herdr; reinstalling or updating the integration overwrites this file.
+// add custom hooks/plugins beside this file instead of editing it.
 // HERDR_INTEGRATION_ID=omp
-// HERDR_INTEGRATION_VERSION=8
+// HERDR_INTEGRATION_VERSION=9
 // @ts-nocheck
 
 import net from "node:net";
@@ -323,9 +324,7 @@ export default function (pi) {
   }
 
   function activateRootSession(ctx: any, sessionStartSource = "startup"): boolean {
-    // RPC/JSON/print still report hasUI=true. Mode is the reliable TUI gate
-    // (same as the Pi Herdr hook).
-    if (ctx?.mode !== "tui") {
+    if (ctx?.hasUI !== true) {
       return false;
     }
     rootSession = true;
@@ -444,6 +443,8 @@ export default function (pi) {
       return;
     }
     if (event?.willContinue === true) {
+      // A continuation is already scheduled, so this end is not a settle.
+      // Older builds omit the field and fall through as before.
       return;
     }
 
@@ -458,31 +459,9 @@ export default function (pi) {
     scheduleIdle();
   });
 
-  pi.on("agent_settled", (_event, ctx) => {
-    if (!rootSession || ctx?.isIdle?.() !== true) {
-      return;
-    }
-    agentActive = false;
-    clearPendingTimers();
-    clearFailureState();
-    publishState();
-  });
-
   pi.on("session_shutdown", () => {
-    if (!rootSession) {
-      return;
+    if (rootSession) {
+      clearPendingTimers();
     }
-    clearPendingTimers();
-    void sendRequest({
-      id: `${source}:release:${Date.now()}`,
-      method: "pane.release_agent",
-      params: {
-        pane_id: paneId,
-        source,
-        agent: "omp",
-        seq: nextReportSeq(),
-      },
-    });
   });
-
 }

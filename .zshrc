@@ -2,7 +2,7 @@ export ZSH="$HOME/.oh-my-zsh"
 export EDITOR="nvim"
 
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="candy-light"
+ZSH_THEME="candy"
 
 # CASE_SENSITIVE="true"
 
@@ -96,6 +96,9 @@ alias ddac='docker rm -f $(docker ps -a -q)'
 # Docker Stop All Containers
 alias dsal='docker kill $(docker ps -q)'
 
+alias k='kubectl'
+alias tf='terraform'
+
 # NVM
 [[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh
 
@@ -179,6 +182,14 @@ autoload -Uz compinit && compinit -C
 
 alias ggg="grok --yolo"
 
+# Knot
+alias knot-dev="/Users/matheusbbarni/projects/bend-node-package-manager-with-grok/bin/knot"
+
 # Pi
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH=$PATH:$HOME/.maestro/bin
+
+export PATH="/Users/matheusbbarni/.bend/bin:$PATH"
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C terraform terraform

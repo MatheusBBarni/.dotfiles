@@ -13,10 +13,11 @@ set -euo pipefail
 #   bin/omarchy-default-agent     (pi is a first-class agent)
 #   bin/omarchy-theme-set-pi
 #
-# What this script does add: zsh/omz, bun, rust, java/kotlin, pnpm, turso,
-# watchman, cliamp (YouTube Music), bettervim, android studio, yazi, Space Mono,
-# bitwarden, ghostty, zed, tailscale, built-in Catppuccin dark, omp if missing,
-# JS/TS/Java/Go language servers, plus personal configs and Pi extensions.
+# What this script does add: zsh/omz, bun, rust, java/kotlin, pnpm, terraform,
+# kubectl, uv, Python/pip3, turso, watchman, cliamp (YouTube Music), bettervim,
+# android studio, yazi, Space Mono, bitwarden, ghostty, zed, tailscale,
+# built-in Catppuccin dark, omp if missing, JS/TS/Java/Go language servers,
+# plus personal configs and Pi extensions.
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=setup-lib.sh
@@ -137,7 +138,8 @@ install_gap_packages() {
   # yazi is not in omarchy-base.packages. ffmpeg/7zip/poppler/resvg are
   # the extras it wants; fd/fzf/ripgrep/zoxide/imagemagick are already there.
   # pac --needed skips packages that are already present.
-  pac yazi ffmpeg 7zip poppler resvg gopls jdtls typescript-language-server
+  pac yazi ffmpeg 7zip poppler resvg gopls jdtls typescript-language-server \
+    terraform kubectl uv python python-pip
 
   if have_cmd bitwarden || pacman -Q bitwarden >/dev/null 2>&1; then
     ui_success "Already installed: bitwarden"

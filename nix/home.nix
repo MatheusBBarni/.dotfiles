@@ -61,6 +61,10 @@
       ocaml
       opam
       python3
+      python3Packages.pip
+      terraform
+      kubectl
+      uv
       watchman
       turso-cli
       cliamp

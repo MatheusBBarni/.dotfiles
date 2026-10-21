@@ -80,7 +80,8 @@ Setup scripts display colored status messages and ANSI icons in interactive term
 `macos-setup.sh` installs a complete development workstation:
 
 - Homebrew, CLI utilities, zsh, Oh My Zsh, and shell plugins
-- Node.js 24 through nvm, Bun, pnpm, Rust, Java/Kotlin, Go, OCaml, and Docker
+- Node.js 24 through nvm, Bun, pnpm, Rust, Java/Kotlin, Go, OCaml, Docker,
+  Terraform, kubectl, uv, Python, and pip3
 - optional bettervim, OMP, Pi packages, Codex and Claude Code configuration
 - Google Chrome, Zed, Ghostty, Helium, Bitwarden, Discord, Tailscale, Android Studio, Handy, and other desktop apps
 - Fonts, Dock entries, CLIAMP, and tracked configuration files
@@ -125,7 +126,7 @@ Xcode is installed when the Mac App Store is signed in. The script skips it and 
 
 `linux-setup.sh` targets generic Arch Linux. It uses official packages through `pacman` and AUR packages through `yay`, bootstrapping `yay` when necessary.
 
-It installs a development workstation similar to macOS, including zsh, Node.js 24, Bun, Rust, Java/Kotlin, Go, Docker, bettervim, OMP, Pi, Codex, Claude Code, Zed, Ghostty, CLIAMP, Tailscale, and desktop applications.
+It installs a development workstation similar to macOS, including zsh, Node.js 24, Bun, Rust, Java/Kotlin, Go, Docker, Terraform, kubectl, uv, Python/pip3, bettervim, OMP, Pi, Codex, Claude Code, Zed, Ghostty, CLIAMP, Tailscale, and desktop applications.
 
 ### Linux one-liner
 
@@ -154,7 +155,7 @@ curl -fsSL https://raw.githubusercontent.com/MatheusBBarni/.dotfiles/master/boot
 
 Omarchy is handled as a separate Linux overlay. `omarchy-setup.sh` assumes the distro already provides many base packages and agents, so it installs only the missing tools and personal configuration.
 
-It skips packages Omarchy already ships, including Pi, Claude, Codex, OpenCode, Herdr, Docker, Git, Neovim, GitHub CLI, common shell utilities, Chromium, and tmux. It adds the remaining development tools, bettervim, OMP configuration, Zed, Ghostty, Tailscale, Android Studio, CLIAMP, fonts, and personal files.
+It skips packages Omarchy already ships, including Pi, Claude, Codex, OpenCode, Herdr, Docker, Git, Neovim, GitHub CLI, common shell utilities, Chromium, and tmux. It adds the remaining development tools, including Terraform, kubectl, uv, Python/pip3, bettervim, OMP configuration, Zed, Ghostty, Tailscale, Android Studio, CLIAMP, fonts, and personal files.
 
 ### Omarchy one-liner
 
@@ -183,7 +184,7 @@ The script applies Omarchy's built-in Catppuccin dark theme, configures CLIAMP f
 `nixos-setup.sh` is for an existing NixOS host. It:
 
 1. Writes the NixOS drop-in and optionally runs `nixos-rebuild switch`.
-2. Applies the Home Manager flake in `nix/` with the workstation package set.
+2. Applies the Home Manager flake in `nix/` with the workstation package set, including Terraform, kubectl, uv, and Python/pip3.
 3. Links shell, editor, terminal, agent, OMP, CLIAMP, and desktop configuration.
 4. Enables the optional Hyprland session, PipeWire, Docker, Tailscale, zsh, and related services.
 

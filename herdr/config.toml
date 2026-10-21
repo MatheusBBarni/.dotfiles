@@ -25,19 +25,21 @@ type = "plugin_action"
 command = "persiyanov.reviewr.toggle"   # <plugin_id>.<action_id> — note the id, not the name
 
 [ui.toast]
-delivery = "system"
+delivery = "terminal"
 
 [ui]
 show_agent_labels_on_pane_borders = true
 
 agent_panel_sort = "priority"
 
+status_indicators = "symbols"
 [experimental]
 allow_nested = true
 pane_history = false
 
 [theme]
-name = "rose-pine-dawn"
+name = "rose-pine"
 
+auto_switch = false
 [ui.sound]
 enabled = true

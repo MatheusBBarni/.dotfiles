@@ -419,7 +419,7 @@ System (nixos-rebuild):
   git neovim gh yazi fzf fd ripgrep zoxide ffmpeg ghostty zed
   bitwarden discord android-studio handy herdr cliamp turso bun
   nodejs_24 pnpm go gopls rustup jdk21 kotlin gradle jdt-language-server
-  typescript-language-server watchman ...
+  terraform kubectl uv python3 pip3 typescript-language-server watchman ...
 
 Hyprland keys:
   Super+Return     ghostty

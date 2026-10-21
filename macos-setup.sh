@@ -433,7 +433,7 @@ run_optional go install_go
 run_optional java install_java_kotlin
 
 ui_step "Installing CLIs"
-brew install node pnpm gh neovim watchman jdtls typescript-language-server ocaml opam dune docker docker-compose docker-buildx tursodatabase/tap/turso
+brew install node pnpm gh neovim watchman jdtls typescript-language-server ocaml opam dune docker docker-compose docker-buildx terraform kubectl uv python tursodatabase/tap/turso
 run_optional cliamp install_cliamp
 run_optional bettervim install_bettervim
 run_optional fonts install_fonts
