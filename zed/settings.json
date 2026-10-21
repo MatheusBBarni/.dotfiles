@@ -162,7 +162,7 @@
   "tab_size": 2,
   "base_keymap": "VSCode",
   "icon_theme": {
-    "mode": "light",
+    "mode": "dark",
     "light": "Catppuccin Macchiato",
     "dark": "Catppuccin Macchiato",
   },
@@ -170,7 +170,7 @@
   "buffer_font_size": 15,
   "theme": {
     "mode": "dark",
-    "light": "Ayu Light",
+    "light": "Catppuccin Frappé - No Italics",
     "dark": "Catppuccin Frappé - No Italics",
   },
 }
