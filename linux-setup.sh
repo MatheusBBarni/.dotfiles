@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Generic Arch/Linux counterpart of macos-setup.sh.
 # On Omarchy, prefer omarchy-setup.sh - that script skips packages and agents
-# the distro already ships (pi, claude, codex, opencode, herdr, docker, ...).
+# the distro already ships (pi, claude, codex, opencode, herdr TUI, docker, ...).
 #
 # Uses pacman for official packages and yay for the AUR.
 
@@ -407,6 +407,7 @@ setup_zshrc_local
 install_nvm
 install_bun
 install_herdr
+install_herdr_app
 install_rust
 install_java_kotlin
 

@@ -11,7 +11,7 @@ set -euo pipefail
 # User (Home Manager):
 #   the macos-setup.sh app list from nixpkgs
 # Overlay (this script):
-#   oh-my-zsh, bettervim, Helium AppImage, Pi/Codex/Claude/OMP configs
+#   oh-my-zsh, bettervim, Helium AppImage, Herdr desktop app, Pi/Codex/Claude/OMP configs
 #
 # macOS analogs:
 #   Rectangle -> Hyprland tiling
@@ -471,6 +471,7 @@ run_step "omp-config" configure_omp
 run_step "helium" install_helium
 run_step "zed-config" configure_zed
 run_step "ghostty-config" configure_ghostty
+run_step "herdr-app" install_herdr_app
 run_step "herdr-config" configure_herdr
 run_step "cliamp-config" configure_cliamp
 

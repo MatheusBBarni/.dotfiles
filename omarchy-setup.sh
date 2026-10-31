@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # Personal overlay for Omarchy (https://omarchy.org).
-# Omarchy quattro already ships the coding agents, so this script does not
-# install pi, claude, codex, opencode, herdr, docker, git, nvim, gh, fzf,
-# fd, ripgrep, jq, zoxide, or chromium.
+# Omarchy quattro ships the Herdr TUI and coding agents. This script skips
+# those existing packages but installs the separate Herdr desktop app.
+# It also applies the shared TUI and desktop-app configurations.
 #
 # Checked against basecamp/omarchy@quattro:
 #   install/omarchy-base.packages
@@ -13,11 +13,11 @@ set -euo pipefail
 #   bin/omarchy-default-agent     (pi is a first-class agent)
 #   bin/omarchy-theme-set-pi
 #
-# What this script does add: zsh/omz, bun, rust, java/kotlin, pnpm, terraform,
-# kubectl, uv, Python/pip3, turso, watchman, cliamp (YouTube Music), bettervim,
-# android studio, yazi, Space Mono, bitwarden, ghostty, zed, tailscale,
-# built-in Catppuccin dark, omp if missing, JS/TS/Java/Go language servers,
-# plus personal configs and Pi extensions.
+# What this script adds: Herdr desktop app, zsh/omz, bun, rust, java/kotlin,
+# pnpm, terraform, kubectl, uv, Python/pip3, turso, watchman, cliamp (YouTube
+# Music), bettervim, android studio, yazi, Space Mono, bitwarden, ghostty, zed,
+# tailscale, built-in Catppuccin dark, omp if missing, JS/TS/Java/Go language
+# servers, plus personal configs and Pi extensions.
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=setup-lib.sh
@@ -590,6 +590,7 @@ run_step "zed" install_zed
 run_step "android-studio" install_android_studio
 run_step "tailscale" install_tailscale
 run_step "zed-config" configure_zed
+run_step "herdr-app" install_herdr_app
 run_step "herdr-config" configure_herdr
 run_step "cliamp-config" configure_cliamp
 run_step "catppuccin" set_catppuccin_theme

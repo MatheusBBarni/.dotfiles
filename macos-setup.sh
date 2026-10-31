@@ -427,6 +427,7 @@ setup_zshrc_local
 run_optional nvm install_nvm
 run_optional bun install_bun
 run_optional herdr install_herdr
+run_optional herdr install_herdr_app
 run_optional rust install_rust
 run_optional go install_go
 run_optional java install_java_kotlin

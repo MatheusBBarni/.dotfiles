@@ -1,0 +1,17 @@
+{
+  "id": "root", "type": "column", "titlebar": "none", "preview": "mods/board/preview.svg",
+  "ui_font": "Geist", "font_size": 13, "background": "canvas",
+  "terminal_padding": [12, 10], "gap": 0, "resizable": false,
+  "children": [
+    { "id": "board-header", "type": "block", "size": { "px": 100 }, "window_drag": true, "content": { "mod": "board", "props": { "role": "header" } } },
+    { "id": "board-cards", "type": "block", "size": { "px": 355 }, "border": { "width": 1, "color": "border" }, "content": { "mod": "board" } },
+    { "id": "workspace", "type": "column", "padding": [14, 24], "gap": 0, "resizable": false, "children": [
+      { "id": "workspace-title", "type": "block", "size": { "px": 34 }, "background": "chrome", "radius": 7, "content": { "mod": "board", "props": { "role": "terminals" } } },
+      { "id": "live-terminals", "type": "block", "background": "surface", "content": { "tab": "active", "pane": {
+        "gap": 12, "radius": 7, "background": "surface", "lone": true,
+        "border": { "width": 1, "color": "border" }, "focus": { "width": 1, "color": "accent" },
+        "header": { "content": { "mod": "board", "props": { "role": "pane" } }, "height": 28, "position": "top", "reveal": "always" }
+      } } }
+    ] }
+  ]
+}

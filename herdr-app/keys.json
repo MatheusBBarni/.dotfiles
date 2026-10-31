@@ -16,6 +16,8 @@
     "ctrl-b 8": "tab.select:8",
     "ctrl-b 9": "tab.select:9",
     "ctrl-b w": "mod.open:picker",
+    "ctrl-b f": "mod.open:files",
+    "ctrl-b shift-c": "mod.open:changes",
     "ctrl-b shift-w": "space.rename",
     "ctrl-b shift-d": "space.close",
     "ctrl-b h": "pane.go:left",

@@ -396,6 +396,35 @@ configure_ghostty() {
   fi
 }
 
+install_herdr_app() {
+  ui_step "Installing Herdr desktop app"
+
+  export PATH="$HOME/.local/bin:$PATH"
+
+  local data_dir="${XDG_DATA_HOME:-$HOME/.local/share}"
+  if have_cmd herdr-app ||
+    [[ -x "$HOME/.local/bin/herdr-app" ]] ||
+    [[ -x "$data_dir/herdr-app/herdr-app" ]] ||
+    [[ -d "$HOME/Applications/Herdr.app" ]] ||
+    [[ -d "/Applications/Herdr.app" ]]; then
+    ui_success "Already installed: Herdr desktop app"
+    return 0
+  fi
+
+  if [[ "$(uname -s)" == "Darwin" && "$(uname -m)" == "x86_64" ]]; then
+    local native_arm64
+    local translated
+    native_arm64="$(sysctl -n hw.optional.arm64 2>/dev/null || true)"
+    translated="$(sysctl -n sysctl.proc_translated 2>/dev/null || true)"
+    if [[ "$native_arm64" != "1" && "$translated" != "1" ]]; then
+      ui_warn "Herdr desktop app is not available for Intel macOS; skipping"
+      return 0
+    fi
+  fi
+
+  curl -fsSL https://releases.herdr.dev/app/install.sh | sh
+}
+
 configure_herdr() {
   ui_step "Configuring herdr"
 
@@ -412,6 +441,19 @@ configure_herdr() {
   if [[ -f "$DOTFILES_DIR/herdr-app/settings.json" ]]; then
     link_file "$DOTFILES_DIR/herdr-app/settings.json" "$HOME/.config/herdr-app/settings.json"
   fi
+  local herdr_board_layout="$DOTFILES_DIR/herdr-app/layouts/board.json"
+  if [[ -f "$herdr_board_layout" ]]; then
+    link_file "$herdr_board_layout" "$HOME/.config/herdr-app/layouts/board.json"
+  fi
+  local herdr_board_mod="$DOTFILES_DIR/herdr-app/mods/board"
+  local herdr_board_file
+  for herdr_board_file in main.js mod.json preview.svg; do
+    if [[ -f "$herdr_board_mod/$herdr_board_file" ]]; then
+      link_file "$herdr_board_mod/$herdr_board_file" \
+        "$HOME/.config/herdr-app/mods/board/$herdr_board_file"
+    fi
+  done
+
   local reviewr_config="$DOTFILES_DIR/herdr/plugins/config/persiyanov.reviewr/config.toml"
   if [[ -f "$reviewr_config" ]]; then
     link_file "$reviewr_config" "$HOME/.config/herdr/plugins/config/persiyanov.reviewr/config.toml"
