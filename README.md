@@ -290,6 +290,7 @@ Useful follow-up actions:
 | `zed/` | Zed settings, keymap, themes, snippets, and export tools |
 | `ghostty/` | Ghostty config, themes, and icons |
 | `herdr/` | Herdr config, Reviewr plugin theme, and OMP integration |
+| `herdr-app/` | Herdr desktop app keybindings, installed by the shared Unix setup scripts |
 | `zsh/` | Custom Oh My Zsh themes installed by setup scripts |
 | `cliamp/` | CLIAMP YouTube Music configuration template |
 | `vscode/` | VS Code settings and extension installer |

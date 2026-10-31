@@ -410,6 +410,9 @@ configure_herdr() {
   if [[ -f "$DOTFILES_DIR/herdr/config.toml" ]]; then
     link_file "$DOTFILES_DIR/herdr/config.toml" "$HOME/.config/herdr/config.toml"
   fi
+  if [[ -f "$DOTFILES_DIR/herdr-app/keys.json" ]]; then
+    link_file "$DOTFILES_DIR/herdr-app/keys.json" "$HOME/.config/herdr-app/keys.json"
+  fi
   local reviewr_config="$DOTFILES_DIR/herdr/plugins/config/persiyanov.reviewr/config.toml"
   if [[ -f "$reviewr_config" ]]; then
     link_file "$reviewr_config" "$HOME/.config/herdr/plugins/config/persiyanov.reviewr/config.toml"
