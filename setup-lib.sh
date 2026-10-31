@@ -413,6 +413,13 @@ configure_herdr() {
   if [[ -f "$DOTFILES_DIR/herdr-app/keys.json" ]]; then
     link_file "$DOTFILES_DIR/herdr-app/keys.json" "$HOME/.config/herdr-app/keys.json"
   fi
+  local herdr_app_theme="$DOTFILES_DIR/herdr-app/themes/rose-pine.json"
+  if [[ -f "$herdr_app_theme" ]]; then
+    link_file "$herdr_app_theme" "$HOME/.config/herdr-app/themes/rose-pine.json"
+  fi
+  if [[ -f "$DOTFILES_DIR/herdr-app/settings.json" ]]; then
+    link_file "$DOTFILES_DIR/herdr-app/settings.json" "$HOME/.config/herdr-app/settings.json"
+  fi
   local reviewr_config="$DOTFILES_DIR/herdr/plugins/config/persiyanov.reviewr/config.toml"
   if [[ -f "$reviewr_config" ]]; then
     link_file "$reviewr_config" "$HOME/.config/herdr/plugins/config/persiyanov.reviewr/config.toml"
