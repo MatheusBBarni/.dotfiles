@@ -384,14 +384,6 @@ configure_zed() {
   fi
 }
 
-configure_zsh_theme() {
-  local custom_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-  local theme_file="$DOTFILES_DIR/zsh/candy-light.zsh-theme"
-
-  if [[ -f "$theme_file" ]]; then
-    link_file "$theme_file" "$custom_dir/themes/candy-light.zsh-theme"
-  fi
-}
 
 configure_ghostty() {
   ui_step "Configuring Ghostty"

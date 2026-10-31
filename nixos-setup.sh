@@ -283,7 +283,6 @@ install_oh_my_zsh() {
   fi
 
   link_file "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
-  configure_zsh_theme
 }
 
 setup_nixos_zshrc_local() {

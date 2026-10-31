@@ -291,7 +291,6 @@ Useful follow-up actions:
 | `ghostty/` | Ghostty config, themes, and icons |
 | `herdr/` | Herdr config, Reviewr plugin theme, and OMP integration |
 | `herdr-app/` | Herdr desktop keybindings, settings, and the Rosé Pine theme, installed by shared Unix setup scripts |
-| `zsh/` | Custom Oh My Zsh themes installed by setup scripts |
 | `cliamp/` | CLIAMP YouTube Music configuration template |
 | `vscode/` | VS Code settings and extension installer |
 | `better-vim/` | Neovim Lua configuration and plugin files |
