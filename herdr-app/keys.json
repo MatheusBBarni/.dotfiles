@@ -18,6 +18,7 @@
     "ctrl-b w": "mod.open:picker",
     "ctrl-b f": "layout.toggle:panel",
     "ctrl-b shift-g": "mod.open:worktree-shortcut",
+    "ctrl-b shift-o": "mod.open:worktree-open-shortcut",
     "ctrl-b shift-c": "mod.open:changes",
     "ctrl-b shift-w": "space.rename",
     "ctrl-b shift-d": "space.close",

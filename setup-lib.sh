@@ -453,13 +453,17 @@ configure_herdr() {
         "$HOME/.config/herdr-app/mods/board/$herdr_board_file"
     fi
   done
-  local herdr_worktree_shortcut="$DOTFILES_DIR/herdr-app/mods/worktree-shortcut"
+  local herdr_worktree_shortcut_mod
   local herdr_worktree_shortcut_file
-  for herdr_worktree_shortcut_file in main.js mod.json; do
-    if [[ -f "$herdr_worktree_shortcut/$herdr_worktree_shortcut_file" ]]; then
-      link_file "$herdr_worktree_shortcut/$herdr_worktree_shortcut_file" \
-        "$HOME/.config/herdr-app/mods/worktree-shortcut/$herdr_worktree_shortcut_file"
-    fi
+  local herdr_worktree_shortcut_source
+  for herdr_worktree_shortcut_mod in worktree-shortcut worktree-open-shortcut; do
+    for herdr_worktree_shortcut_file in main.js mod.json; do
+      herdr_worktree_shortcut_source="$DOTFILES_DIR/herdr-app/mods/$herdr_worktree_shortcut_mod/$herdr_worktree_shortcut_file"
+      if [[ -f "$herdr_worktree_shortcut_source" ]]; then
+        link_file "$herdr_worktree_shortcut_source" \
+          "$HOME/.config/herdr-app/mods/$herdr_worktree_shortcut_mod/$herdr_worktree_shortcut_file"
+      fi
+    done
   done
 
   local reviewr_config="$DOTFILES_DIR/herdr/plugins/config/persiyanov.reviewr/config.toml"
