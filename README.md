@@ -290,7 +290,7 @@ Useful follow-up actions:
 | `zed/` | Zed settings, keymap, themes, snippets, and export tools |
 | `ghostty/` | Ghostty config, themes, and icons |
 | `herdr/` | Herdr config, Reviewr plugin theme, and OMP integration |
-| `herdr-app/` | Herdr app and TUI config, theme-aware Board layout, Ctrl+B Files/Changes shortcuts, Rosé Pine chrome and Catppuccin terminal palette, installed/configured by shared Unix setup scripts |
+| `herdr-app/` | Herdr app and TUI config, theme-aware Board layout, Ctrl+B Files/Changes/Worktree shortcuts, Rosé Pine chrome and Catppuccin terminal palette, installed/configured by shared Unix setup scripts |
 | `cliamp/` | CLIAMP YouTube Music configuration template |
 | `vscode/` | VS Code settings and extension installer |
 | `better-vim/` | Neovim Lua configuration and plugin files |
